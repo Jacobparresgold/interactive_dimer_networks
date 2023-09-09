@@ -763,12 +763,6 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
 
     Displays an interactive app.
     '''
-    num_cols = 4
-    num_rows = 3+num_combos_with_replacement(m,2)
-    app_width_px = app_width*plt.rcParams['figure.dpi']
-    app_height_px = app_height*plt.rcParams['figure.dpi']
-    app_grid = ipywidgets.GridspecLayout(num_rows,num_cols,width=f'{app_width_px}px',heigth=f'{app_height_px}px')
-
     ############## Initialize affinities and expression levels
     if preset_function is None:
         rng = np.random.default_rng()
@@ -813,6 +807,13 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
         else:
             raise ValueError('preset_function not recognized.')
 
+    ############## Set up grid
+    num_cols = 4
+    num_rows = 3+num_combos_with_replacement(m,2)
+    app_width_px = app_width*plt.rcParams['figure.dpi']
+    app_height_px = app_height*plt.rcParams['figure.dpi']
+    app_grid = ipywidgets.GridspecLayout(num_rows,num_cols,width=f'{app_width_px}px',heigth=f'{app_height_px}px')
+
     ############## Plot initial
     plt.ioff()
 
@@ -832,11 +833,15 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
     node_scales = [-3,3,3*schematic_size,6*schematic_size]
     K_edge_scales = [-5,7,0.5*schematic_size,2*schematic_size]
 
+    if dimer_of_interest is not None:
+        dimer_of_interest_array = np.array([[dimer_of_interest]])
+    else:
+        dimer_of_interest_array = None
     schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
                                         n_input=1, # Number of inputs
                                         param_sets=param_sets, # Parameter sets to draw from
                                         univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                        dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                        dimers_of_interest=dimer_of_interest_array, # Index of output dimer
                                         input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
                                         ncols = 1, # Number of columns in figure
                                         r_node = r_node, # Radius of nodes around center
@@ -907,7 +912,13 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
         nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
         nonlocal dimer_of_interest
 
-        dimer_of_interest = make_nXn_species_names(m).index(change['new'])-m
+        if change['new'] is not None:
+            dimer_of_interest = make_nXn_species_names(m).index(change['new'])-m
+            dimer_of_interest_array = np.array([[dimer_of_interest]])
+        else:
+            dimer_of_interest = None
+            dimer_of_interest_array = None
+        
 
         plot_ax.clear()
         schematic_ax.clear()
@@ -917,7 +928,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
                                             n_input=1, # Number of inputs
                                             param_sets=param_sets, # Parameter sets to draw from
                                             univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                            dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                            dimers_of_interest=dimer_of_interest_array, # Index of output dimer
                                             input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
                                             ncols = 1, # Number of columns in figure
                                             r_node = r_node, # Radius of nodes around center
@@ -953,7 +964,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
                                             n_input=1, # Number of inputs
                                             param_sets=param_sets, # Parameter sets to draw from
                                             univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                            dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                            dimers_of_interest=dimer_of_interest_array, # Index of output dimer
                                             input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
                                             ncols = 1, # Number of columns in figure
                                             r_node = r_node, # Radius of nodes around center
@@ -995,7 +1006,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
                                             n_input=1, # Number of inputs
                                             param_sets=param_sets, # Parameter sets to draw from
                                             univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                            dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                            dimers_of_interest=dimer_of_interest_array, # Index of output dimer
                                             input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
                                             ncols = 1, # Number of columns in figure
                                             r_node = r_node, # Radius of nodes around center
@@ -1038,7 +1049,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
                                                 n_input=1, # Number of inputs
                                                 param_sets=param_sets, # Parameter sets to draw from
                                                 univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                                dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                                dimers_of_interest=dimer_of_interest_array, # Index of output dimer
                                                 input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
                                                 ncols = 1, # Number of columns in figure
                                                 r_node = r_node, # Radius of nodes around center
@@ -1080,7 +1091,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
                                                 n_input=1, # Number of inputs
                                                 param_sets=param_sets, # Parameter sets to draw from
                                                 univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                                dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                                dimers_of_interest=dimer_of_interest_array, # Index of output dimer
                                                 input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
                                                 ncols = 1, # Number of columns in figure
                                                 r_node = r_node, # Radius of nodes around center
@@ -1136,17 +1147,19 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
 
     return
 
-def plot_responses_twoinput_static(plot_fig, plot_ax,m,param_sets,dimer_of_interest,t):
+def plot_responses_twoinput_static(plot_fig, plot_ax,m,param_sets,dimer_of_interest,t,out_range):
     '''
     plot_fig, plot_ax: Pre-existing figure and axis
     m: int
-    Number of monomers
+        Number of monomers
     param_sets: Array of shape (1,num_combos_with_replacement(m,2)+m-1)
-    Parameters to simulate
+        Parameters to simulate
     dimer_of_interest: int
-    Dimer to use as output
+        Dimer to use as output
     t: int
-    Number of input titration points
+        Number of input titration points
+    out_range: list of length 2
+        Range of output concentrations to plot
     '''
     num_inputs = 2
 
@@ -1155,7 +1168,7 @@ def plot_responses_twoinput_static(plot_fig, plot_ax,m,param_sets,dimer_of_inter
     input_lb = -3 # Lower bound for titrating the input monomer species, log10 scale
     input_ub = 3 # Upper bound for titrating the input monomer species, log10 scale
 
-    out_range = [10**input_lb, 10**input_ub]
+    # out_range = [10**input_lb, 10**input_ub]
     min_affinity = 1e-5 # Will not plot dimers below this affinity (assumed not to dimerize)
 
     ####### Perform simulation
@@ -1213,16 +1226,6 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
 
     Displays an interactive app.
     '''
-    num_inputs = 2
-
-    num_cols = 4
-    num_rows = 3+num_combos_with_replacement(m,2)
-    app_width_px = app_width*plt.rcParams['figure.dpi']
-    app_height_px = app_height*plt.rcParams['figure.dpi']
-    app_grid = ipywidgets.GridspecLayout(num_rows,num_cols,width=f'{app_width_px}px',heigth=f'{app_height_px}px')
-
-    plot_width=1.553*plot_size
-    plot_height=plot_size
 
     ############## Initialize affinities and expression levels
     if preset_function is None:
@@ -1306,14 +1309,27 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
         else:
             raise ValueError('preset_function not recognized.')
 
+    ############## Set up grid
+    num_inputs = 2
+
+    num_cols = 4
+    num_rows = 3+num_combos_with_replacement(m,2)
+    app_width_px = app_width*plt.rcParams['figure.dpi']
+    app_height_px = app_height*plt.rcParams['figure.dpi']
+    app_grid = ipywidgets.GridspecLayout(num_rows,num_cols,width=f'{app_width_px}px',heigth=f'{app_height_px}px')
+
+    plot_width=1.553*plot_size
+    plot_height=plot_size
+
     ############## Plot initial
     plt.ioff()
 
     t=30 # Number of input titration points
+    out_range = [10**-3, 10**3]
 
     plot_fig, plot_ax = plt.subplots(figsize=(plot_width,plot_height))
     plot_fig.subplots_adjust(left=0.2,right=0.7,bottom=0.2,top=0.9)
-    plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
+    plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,out_range)
 
 
     ####### Plot Schematic
@@ -1325,11 +1341,16 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
     node_scales = [-3,3,3*schematic_size,6*schematic_size]
     K_edge_scales = [-5,7,0.5*schematic_size,2*schematic_size]
 
+    if dimer_of_interest is not None:
+        dimer_of_interest_array = np.array([[dimer_of_interest]])
+    else:
+        dimer_of_interest_array = None
+    
     schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
                                         n_input=num_inputs, # Number of inputs
                                         param_sets=param_sets, # Parameter sets to draw from
                                         univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                        dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                        dimers_of_interest=dimer_of_interest_array, # Index of output dimer
                                         input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
                                         ncols = 1, # Number of columns in figure
                                         r_node = r_node, # Radius of nodes around center
@@ -1362,6 +1383,21 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
         disabled=False,
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     )
+    def custom_readout_format(value):
+        return f'{10**value:.2e}'
+    
+    out_range_slider = ipywidgets.FloatRangeSlider(
+        value=[-3, 3],
+        min=-3,
+        max=3,
+        step=0.1,
+        description='Output Range:',
+        disabled=False,
+        continuous_update=False,
+        orientation='horizontal',
+        readout=True,
+        readout_format=custom_readout_format,
+    )
 
     K_widgets = []
     for K_i in range(num_combos_with_replacement(m,2)):
@@ -1392,17 +1428,22 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
         nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
         nonlocal dimer_of_interest
 
-        dimer_of_interest = make_nXn_species_names(m).index(change['new'])-m
-
+        if change['new'] is not None:
+            dimer_of_interest = make_nXn_species_names(m).index(change['new'])-m
+            dimer_of_interest_array = np.array([[dimer_of_interest]])
+        else:
+            dimer_of_interest = None
+            dimer_of_interest_array = None
+        
         plot_ax.clear()
         schematic_ax.clear()
-        plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
+        plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,out_range)
 
         schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
                                             n_input=num_inputs, # Number of inputs
                                             param_sets=param_sets, # Parameter sets to draw from
                                             univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                            dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                            dimers_of_interest=dimer_of_interest_array, # Index of output dimer
                                             input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
                                             ncols = 1, # Number of columns in figure
                                             r_node = r_node, # Radius of nodes around center
@@ -1433,13 +1474,50 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
 
         plot_ax.clear()
         schematic_ax.clear()
-        plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
+        plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,out_range)
 
         schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
                                             n_input=num_inputs, # Number of inputs
                                             param_sets=param_sets, # Parameter sets to draw from
                                             univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                            dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                            dimers_of_interest=dimer_of_interest_array, # Index of output dimer
+                                            input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
+                                            ncols = 1, # Number of columns in figure
+                                            r_node = r_node, # Radius of nodes around center
+                                            r_loop = r_loop, # Radius of loops around nodes
+                                            node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
+                                            K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
+                                            input_cmap='Set2', # Colormap for nodes
+                                            fontname='Dejavu Sans', # Font name
+                                            fontsize=12, # Font size
+                                            non_output_dimer_color='gray',
+                                            upscale_arrowhead=1.7,
+                                            node_edge_width=1,
+        )
+
+        plot_fig.canvas.draw()
+        plot_fig.canvas.flush_events()
+
+        schematic_fig.canvas.draw()
+        schematic_fig.canvas.flush_events()
+
+        return
+    
+    def update_out_range(change):
+        nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
+        nonlocal out_range
+
+        out_range = change['new']
+
+        plot_ax.clear()
+        schematic_ax.clear()
+        plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,out_range)
+
+        schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
+                                            n_input=num_inputs, # Number of inputs
+                                            param_sets=param_sets, # Parameter sets to draw from
+                                            univs_to_plot=np.array([0]), # Indicies of param_sets to plot
+                                            dimers_of_interest=dimer_of_interest_array, # Index of output dimer
                                             input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
                                             ncols = 1, # Number of columns in figure
                                             r_node = r_node, # Radius of nodes around center
@@ -1464,6 +1542,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
 
     output_dimer_dropdown_widget.observe(update_dimer_of_interest, names='value')
     t_int_input.observe(update_t, names='value')
+    out_range_slider.observe(update_out_range, names='value')
 
     K_update_functions = []
     for K_i in range(num_combos_with_replacement(m,2)):
@@ -1475,13 +1554,13 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
 
             plot_ax.clear()
             schematic_ax.clear()
-            plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
+            plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,out_range)
 
             schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
                                                 n_input=num_inputs, # Number of inputs
                                                 param_sets=param_sets, # Parameter sets to draw from
                                                 univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                                dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                                dimers_of_interest=dimer_of_interest_array, # Index of output dimer
                                                 input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
                                                 ncols = 1, # Number of columns in figure
                                                 r_node = r_node, # Radius of nodes around center
@@ -1517,13 +1596,13 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
 
             plot_ax.clear()
             schematic_ax.clear()
-            plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
+            plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,out_range)
 
             schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
                                                 n_input=num_inputs, # Number of inputs
                                                 param_sets=param_sets, # Parameter sets to draw from
                                                 univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                                dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                                dimers_of_interest=dimer_of_interest_array, # Index of output dimer
                                                 input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
                                                 ncols = 1, # Number of columns in figure
                                                 r_node = r_node, # Radius of nodes around center
@@ -1563,7 +1642,8 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
     schematic_fig.canvas.resizable = False
 
     app_grid[:,0] = schematic_fig.canvas
-    app_grid[:,1] = plot_fig.canvas
+    app_grid[:-1,1] = plot_fig.canvas
+    app_grid[-1,1] = out_range_slider
     app_grid[0:2,2] = t_int_input
     app_grid[:2,3] = output_dimer_dropdown_widget
     app_grid[2,2] = ipywidgets.HTML(value="<b>Dimerization Affinities</b>",layout=ipywidgets.Layout(height='auto', width=f'auto'))
