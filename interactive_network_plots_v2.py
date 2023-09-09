@@ -1196,10 +1196,12 @@ def plot_responses_twoinput_static(plot_fig, plot_ax,m,param_sets,dimer_of_inter
     plot_ax.yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
     _ = plot_ax.set_title('Response of {}'.format(make_nXn_species_names(m=m)[m+dimer_of_interest].replace('_','')))
     # Add colorbar
-    divider = make_axes_locatable(plot_ax)
-    cax1 = divider.append_axes("right", size="5%", pad=0.05)
-    plot_fig.colorbar(matrix,cax=cax1,label='Concentration')
-    cax1.yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
+    if len(plot_fig.axes)==1:
+        divider = make_axes_locatable(plot_ax)
+        cax1 = divider.append_axes("right", size="5%", pad=0.05)
+    plot_fig.axes[1].clear()
+    plot_fig.colorbar(matrix,cax=plot_fig.axes[1],label='Concentration')
+    plot_fig.axes[1].yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
 
     return plot_fig,plot_ax
 
