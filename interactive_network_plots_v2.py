@@ -740,7 +740,28 @@ def plot_responses_oneinput_static(plot_fig, plot_ax,m,param_sets,dimer_of_inter
 
 def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_width=3,plot_height=2,preset_function=None):
     '''
-    Function to create plotting interface given m, the number of network monomers
+    Function to create plotting interface given m, the number of network monomers, for one-input functions.
+
+    Parameters:
+    --------------
+    m: int
+        Number of monomers in the network
+    app_width: int
+        Width of the app in inches
+    app_height: int
+        Height of the app in inches
+    schematic_size: int
+        Approximate width and height of the network schematic in inches
+    plot_width: int
+        Approximate width of the input-output plot in inches
+    plot_height: int
+        Approximate height of the input-output plot in inches
+    preset_function: str or None
+        If None, will initialize with random parameters. Otherwise, will initialize with the specified function.
+    
+    Returns: None
+
+    Displays an interactive app.
     '''
     num_cols = 4
     num_rows = 3+num_combos_with_replacement(m,2)
@@ -834,14 +855,14 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
     output_dimer_dropdown_widget = ipywidgets.Dropdown(
         options=[None]+make_nXn_species_names(m)[m:],
         value=make_nXn_species_names(m)[m+dimer_of_interest],
-        description='Output Dimer',
+        description='Output Dimer:',
         disabled=False,
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     )
 
     plot_all_dimers_checkbox = ipywidgets.Checkbox(
         value=plot_all_dimers,
-        description='Plot responses of all dimers',
+        description='Plot all dimers',
         disabled=False,
         indent=False,
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
@@ -852,7 +873,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
         min=1,
         max=1000,
         step=1,
-        description='Number of simulated titration points:',
+        description='Input points:',
         disabled=False,
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     )
@@ -865,7 +886,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
         min=-5, # max exponent of base
         max=7, # min exponent of base
         step=0.1, # exponent step
-        description=make_Kij_names(m, n_input = 1)[K_i],
+        description=make_Kij_names(m, n_input = 1)[K_i]+':',
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     ))
 
@@ -877,7 +898,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
         min=-3, # max exponent of base
         max=3, # min exponent of base
         step=0.1, # exponent step
-        description=f'M_{A_i+2}',
+        description=f'M_{A_i+2}:',
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     ))
 
@@ -1169,9 +1190,28 @@ def plot_responses_twoinput_static(plot_fig, plot_ax,m,param_sets,dimer_of_inter
 
     return plot_fig,plot_ax
 
-def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_width,plot_height,preset_function=None):
+def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,preset_function=None):
     '''
-    Function to create plotting interface given m, the number of network monomers
+    Function to create plotting interface given m, the number of network monomers, for one-input functions.
+
+    Parameters:
+    --------------
+    m: int
+        Number of monomers in the network
+    app_width: int
+        Width of the app in inches
+    app_height: int
+        Height of the app in inches
+    schematic_size: int
+        Approximate width and height of the network schematic in inches
+    plot_size: int
+        Approximate width and height of the input-output plot in inches
+    preset_function: str or None
+        If None, will initialize with random parameters. Otherwise, will initialize with the specified function.
+    
+    Returns: None
+
+    Displays an interactive app.
     '''
     num_inputs = 2
 
@@ -1180,6 +1220,9 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_width,pl
     app_width_px = app_width*plt.rcParams['figure.dpi']
     app_height_px = app_height*plt.rcParams['figure.dpi']
     app_grid = ipywidgets.GridspecLayout(num_rows,num_cols,width=f'{app_width_px}px',heigth=f'{app_height_px}px')
+
+    plot_width=1.553*plot_size
+    plot_height=plot_size
 
     ############## Initialize affinities and expression levels
     if preset_function is None:
@@ -1305,7 +1348,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_width,pl
     output_dimer_dropdown_widget = ipywidgets.Dropdown(
         options=make_nXn_species_names(m)[m:],
         value=make_nXn_species_names(m)[m+dimer_of_interest],
-        description='Output Dimer',
+        description='Output Dimer:',
         disabled=False,
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     )
@@ -1315,7 +1358,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_width,pl
         min=1,
         max=1000,
         step=1,
-        description='Number of simulated titration points:',
+        description='Input points:',
         disabled=False,
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     )
@@ -1328,7 +1371,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_width,pl
         min=-5, # max exponent of base
         max=7, # min exponent of base
         step=0.1, # exponent step
-        description=make_Kij_names(m, n_input = 1)[K_i],
+        description=make_Kij_names(m, n_input = 1)[K_i]+':',
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     ))
 
@@ -1340,7 +1383,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_width,pl
         min=-3, # max exponent of base
         max=3, # min exponent of base
         step=0.1, # exponent step
-        description=f'M_{A_i+1+num_inputs}',
+        description=f'M_{A_i+1+num_inputs}:',
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     ))
 
