@@ -1395,7 +1395,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
     )
     
     out_range_slider = ipywidgets.FloatRangeSlider(
-        value=[-3, 3],
+        value=list(np.log10(out_range)),
         min=-3,
         max=3,
         step=0.1,
