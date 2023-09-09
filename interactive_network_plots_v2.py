@@ -1132,11 +1132,13 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
 
     app_grid[:,0] = schematic_fig.canvas
     app_grid[:,1] = plot_fig.canvas
-    app_grid[0,2] = plot_all_dimers_checkbox
-    app_grid[1,2] = t_int_input
+    app_grid[0,2] = t_int_input
+    app_grid[1,2] = plot_all_dimers_checkbox
     app_grid[:2,3] = output_dimer_dropdown_widget
-    app_grid[2,2] = ipywidgets.HTML(value="<b>Dimerization Affinities</b>",layout=ipywidgets.Layout(height='auto', width=f'auto'))
-    app_grid[2,3] = ipywidgets.HTML(value="<b>Accessory Protein Expression Levels</b>",layout=ipywidgets.Layout(height='auto', width=f'auto'))
+    app_grid[2,2] = ipywidgets.HTML(value="<div style='text-align: center;''><b>Dimerization Affinities</b></div>",\
+                                    layout=ipywidgets.Layout(height='auto', width=f'auto'))
+    app_grid[2,3] = ipywidgets.HTML(value="<div style='text-align: center;''><b>Accessory Protein Expression Levels</b></div>",\
+                                    layout=ipywidgets.Layout(height='auto', width=f'auto'))
     for K_i in range(num_combos_with_replacement(m,2)):
         app_grid[3+K_i,2] = K_widgets[K_i]
     for A_i in range(m-1):
