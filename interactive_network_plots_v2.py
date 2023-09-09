@@ -265,6 +265,116 @@ def simulate_networks(m, num_inputs, param_sets, t = 12, input_lb = -3, input_ub
         S_all[:,:,pset_index] = run_eqtk(N, C0.copy(), pset, acc_monomer_ind)
     return C0,S_all  
 
+def calculate_object_size(input_,lower_input_bound,upper_input_bound,lower_size_bound,upper_size_bound):
+    '''
+    Takes some input, and uses some input bounds to rescale that input to some output bounds (such as width of a line in points).
+    '''
+    if input_<lower_input_bound:
+        return 0
+    elif input_>upper_input_bound:
+        return upper_size_bound
+    else:
+        return lower_size_bound+((input_-lower_input_bound)/(upper_input_bound-lower_input_bound))*(upper_size_bound-lower_size_bound)
+
+def get_poly_vertices(n, r = 1, dec = 3, start = math.pi/2):
+    """
+    Get x and y coordinates of n-polygon with radius r.
+    """
+    #This could be broadcast with numpy
+    #i.e. x = r * np.cos(2*np.pi * np.arange(1,n+1)/n)
+    #but I think it's easier to follow as list comprehension
+    x = np.array([round(r * math.cos((2*math.pi*i/n)+start), dec) for i in range(n)])
+    y = np.array([round(r * math.sin((2*math.pi*i/n)+start), dec) for i in range(n)])
+    return x,y
+
+def make_network_nodes_polygon(m, r, n_input,start_angle):
+    '''
+    Make a dataframe of nodes with columns for species name, type, and x and y coordinates
+    '''
+    x, y = get_poly_vertices(m, r=r,start=start_angle)
+    species = [f'M_{i}' for i in range(1,m+1)]
+    species_type = ['input']*n_input + ['accessory']*(m - n_input)
+    node_df = pd.DataFrame({'species': species, 'species_type':species_type, 
+                            'x': x, 'y': y})
+    return node_df
+
+def make_self_edges(m, r_node, r_edge,start_angle):
+    '''
+    Make a dataframe of self-edges with columns for x and y coordinates and \
+    Kij name
+    '''
+    edge_df_list = [0] * m
+    x, y = get_poly_vertices(m, r=r_node+r_edge,start=start_angle)
+    # weights_scaled = np.array(K)*edge_scale
+    for i in range(m):
+        # Set center of self-edge to be r_edge further from the origin
+        angle =  math.atan2(y[i],x[i])
+        y_new = (1+r_edge)*np.sin(angle)
+        x_new = (1+r_edge)*np.cos(angle)
+        x_new = x[i]
+        y_new = y[i]
+        center = [[x_new, y_new]]
+        tmp_df = pd.DataFrame(center, columns=['x', 'y'])
+        tmp_df['Kij_names'] = [f'K_{i+1}_{i+1}']
+        edge_df_list[i] = tmp_df
+        
+    return pd.concat(edge_df_list)
+
+def make_heterodimer_edges(m, node_df):
+    '''
+    Make a dataframe of heterodimer edges with columns for Kij name and x and y coordinates
+    '''
+    pairs = itertools.combinations(range(m), 2)
+    n_heterodimers = number_of_heterodimers(m)
+    x = [0]*n_heterodimers
+    x_end = [0]*n_heterodimers
+    y = [0]*n_heterodimers
+    y_end = [0]*n_heterodimers
+    names = [0]*n_heterodimers
+    for i, comb in enumerate(pairs):
+        x[i] = node_df.loc[comb[0],'x']
+        x_end[i] = node_df.loc[comb[1],'x']
+        y[i] = node_df.loc[comb[0],'y']
+        y_end[i] = node_df.loc[comb[1],'y']
+        names[i] = f'K_{comb[0]+1}_{comb[1]+1}'
+
+    edge_df = pd.DataFrame({'Kij_names': names,
+                          'x': x, 'x_end': x_end,
+                          'y': y, 'y_end': y_end})
+    return edge_df
+
+
+def get_circle_intersections(x0, y0, r0, x1, y1, r1):
+    '''
+    Get the intersection points of two circles
+    FROM: https://stackoverflow.com/questions/55816902/finding-the-intersection-of-two-circles
+    circle 1: (x0, y0), radius r0
+    circle 2: (x1, y1), radius r1
+    '''
+    d=math.sqrt((x1-x0)**2 + (y1-y0)**2)
+    
+    # non intersecting
+    if d > r0 + r1 :
+        return None
+    # One circle within other
+    if d < abs(r0-r1):
+        return None
+    # coincident circles
+    if d == 0 and r0 == r1:
+        return None
+    else:
+        a=(r0**2-r1**2+d**2)/(2*d)
+        h=math.sqrt(r0**2-a**2)
+        x2=x0+a*(x1-x0)/d   
+        y2=y0+a*(y1-y0)/d   
+        x3=x2+h*(y1-y0)/d     
+        y3=y2-h*(x1-x0)/d 
+
+        x4=x2-h*(y1-y0)/d
+        y4=y2+h*(x1-x0)/d
+        
+        return [[x3, y3], [x4, y4]]
+
 
 def make_network_plots_polygon(fig,ax,m, n_input, univs_to_plot, param_sets, dimers_of_interest=None,input_node_values = np.array([0]), ncols = 1, r_node = 1, r_loop = 0.5,
                             node_scales = [-3,3,5,50], K_edge_scales = [-5,7,4,10],saveto='',input_cmap='Pastel1',\
