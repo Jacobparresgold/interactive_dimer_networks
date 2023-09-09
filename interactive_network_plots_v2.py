@@ -910,7 +910,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
     ############## Define Callback
     def update_dimer_of_interest(change):
         nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
-        nonlocal dimer_of_interest
+        nonlocal dimer_of_interest, dimer_of_interest_array
 
         if change['new'] is not None:
             dimer_of_interest = make_nXn_species_names(m).index(change['new'])-m
@@ -1507,7 +1507,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
         nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
         nonlocal out_range
 
-        out_range = change['new']
+        out_range = [10**change['new'][0],10**change['new'][1]]
 
         plot_ax.clear()
         schematic_ax.clear()
@@ -1537,6 +1537,8 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
 
         schematic_fig.canvas.draw()
         schematic_fig.canvas.flush_events()
+
+        out_range_slider.description = f'Output Range: {out_range[0]:.2e} - {out_range[1]:.2e}'
 
         return
 
