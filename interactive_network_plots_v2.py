@@ -1228,7 +1228,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
 
     Displays an interactive app.
     '''
-
+    out_range = [10**-3, 10**3]
     ############## Initialize affinities and expression levels
     if preset_function is None:
         rng = np.random.default_rng()
@@ -1244,55 +1244,62 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
             m=3
             param_sets = np.array([[1e-10,1e-10, 1e2,1e-10,1e3,1e-10,1e0]])
             dimer_of_interest = make_nXn_species_names(m).index('D_1_3') - m # Index of dimer to use as output (D_1_1 = index 0)
+            out_range = [1e-3,1e1]
         elif preset_function=='A=B':
             m=3
             param_sets = np.array([[1e-10, 100000.0, 14003, 1e-10, \
                                     14005, 100000.0, 1.3]])
             dimer_of_interest = make_nXn_species_names(m).index('D_3_3') - m # Index of dimer to use as output (D_1_1 = index 0)
+            out_range = [1e-3,1e0]
         elif preset_function=='NOR':
             m=3
             param_sets = np.array([[1e-10, 1e-10, 100000.0, \
                                     1e-10, 100000.0, 1623, 1.86]])
             dimer_of_interest = make_nXn_species_names(m).index('D_3_3') - m # Index of dimer to use as output (D_1_1 = index 0)
+            out_range = [1e-3,1e1]
         elif preset_function=='ANOTB':
             if m==3:
                 param_sets = np.array([[1e-10, 1e-10, 0.14, \
                                         1e-10, 100000.0, 1.16, 1.75]])
                 dimer_of_interest = make_nXn_species_names(m).index('D_1_3') - m # Index of dimer to use as output (D_1_1 = index 0)
-            elif m==4:
-                param_sets = np.array([[3.0, 1e-10, 3.0, 10000.0, 1e-10, 10000.0, 1e-10, 1e-10, 1e-10, 1e-10, 1.0, 1.0]])
-                dimer_of_interest = make_nXn_species_names(m).index('D_1_3') - m # Index of dimer to use as output (D_1_1 = index 0)
+                out_range = [1e-3,1e1]
             else:
                 m=4
                 param_sets = np.array([[3.0, 1e-10, 3.0, 10000.0, 1e-10, 10000.0, 1e-10, 1e-10, 1e-10, 1e-10, 1.0, 1.0]])
                 dimer_of_interest = make_nXn_species_names(m).index('D_1_3') - m # Index of dimer to use as output (D_1_1 = index 0)
+                out_range = [1e-3,1e1]
         elif preset_function=='A!=B':
             m=4
             param_sets = np.array([[1e-10, 10000.0, 254, 1e-10, 1e-10, 255, \
                             1e-10, 1e-10, 10000.0, \
                                 0.14, 24, 23]])
             dimer_of_interest = make_nXn_species_names(m).index('D_4_4') - m # Index of dimer to use as output (D_1_1 = index 0)
+            out_range = [1e-3,1e1]
         elif preset_function=='NAND':
             m=4
             param_sets = np.array([[50.0, 1e-10, 1e-10, 10000.0, 50.0, 10000.0, 1e-10, 1e-10, 10000.0, 1e-10, 1.0, 1.0]])
             dimer_of_interest = make_nXn_species_names(m).index('D_3_4') - m # Index of dimer to use as output (D_1_1 = index 0)
+            out_range = [1e-3,1e1]
         elif preset_function=='AND':
             m=4
             param_sets = np.array([[1500, 9, 1e-10, 100000.0,  \
                                     1500, 100000.0, 1e-10, 100, 1e-10, \
                                         100, 0.55, 0.55]])
             dimer_of_interest = make_nXn_species_names(m).index('D_1_2') - m
+            out_range = [1e-3,1e1]
         elif preset_function=='OR':
             m=4
             param_sets = np.array([[1e-10, 1e-10, 10000.0, 1e-10, \
                             1e-10, 10000.0, 1e-10, 1e-10, 10000.0, \
                                 2.16, 20.9, 20]])
             dimer_of_interest = make_nXn_species_names(m).index('D_4_4') - m # Index of dimer to use as output (D_1_1 = index 0)
+            out_range = [1e-3,1e2]
         elif preset_function=='2D_bandpass':
             m=5
             param_sets = np.array([[1e-10, 1e-10, 1e-10, 10000.0, 20.0, 1e-10, 10000.0, 1e-10, 20.0, 1e-10,\
                             1e-10, 10000.0, 1e-10, 10000.0, 100.0, 5.0, 5.0, 3.7]])
             dimer_of_interest = make_nXn_species_names(m).index('D_5_5') - m # Index of dimer to use as output (D_1_1 = index 0)
+            out_range = [1e-3,1e0]
         elif preset_function=='XNOR':
             m=5
             param_sets = np.array([[
@@ -1303,11 +1310,13 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
                 1e4, 
                 2.3, 2.3, 1.29]])
             dimer_of_interest = make_nXn_species_names(m).index('D_5_5') - m # Index of dimer to use as output (D_1_1 = index 0)
+            out_range = [1e-3,1e1]
         elif preset_function=='XOR':
             m=6
             param_sets = np.array([[1e-10, 1e-10, 1e-10, 1e-10, 1e-10, 10000.0, 1e-10, 10000.0, 1e-10, 1e-10, 1e-10, \
                             1e-10, 1e-10, 10000.0, 10000.0, 100.0, 10000.0, 1e-10, 1e-10, 10000.0, 1e-10, 2.0, 0.1, 1.0, 2.0]])
             dimer_of_interest = make_nXn_species_names(m).index('D_4_4') - m # Index of dimer to use as output (D_1_1 = index 0)
+            out_range = [1e-3,1e-1]
         else:
             raise ValueError('preset_function not recognized.')
 
@@ -1327,7 +1336,6 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
     plt.ioff()
 
     t=30 # Number of input titration points
-    out_range = [10**-3, 10**3]
 
     plot_fig, plot_ax = plt.subplots(figsize=(plot_width,plot_height))
     plot_fig.subplots_adjust(left=0.2,right=0.7,bottom=0.2,top=0.9)
@@ -1391,12 +1399,18 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
         min=-3,
         max=3,
         step=0.1,
-        description='Output Range:',
+        description=f'Output Range:',
         disabled=False,
         continuous_update=False,
         orientation='horizontal',
         readout=True,
-        readout_format='.2f',
+        readout_format='.1f',
+    )
+    out_range_label = ipywidgets.HTML(\
+        value = '<div style="text-align: center;">{}</div>'.format("10^({}) - 10^({})".format(f'{out_range_slider.value[0]:.1f}',f'{out_range_slider.value[1]:.1f}')),
+        placeholder='',
+        description='',
+        layout=ipywidgets.Layout(height='auto', width=f'auto'),
     )
 
     K_widgets = []
@@ -1538,7 +1552,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
         schematic_fig.canvas.draw()
         schematic_fig.canvas.flush_events()
 
-        out_range_slider.description = f'Output Range: {out_range[0]:.2e} - {out_range[1]:.2e}'
+        out_range_label.value = '<div style="text-align: center;">{}</div>'.format("10^({}) - 10^({})".format(f'{out_range_slider.value[0]:.1f}',f'{out_range_slider.value[1]:.1f}'))
 
         return
 
@@ -1644,12 +1658,15 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
     schematic_fig.canvas.resizable = False
 
     app_grid[:,0] = schematic_fig.canvas
-    app_grid[:-1,1] = plot_fig.canvas
-    app_grid[-1,1] = out_range_slider
+    app_grid[:-2,1] = plot_fig.canvas
+    app_grid[-2,1] = out_range_slider
+    app_grid[-1,1] = out_range_label
     app_grid[0:2,2] = t_int_input
     app_grid[:2,3] = output_dimer_dropdown_widget
-    app_grid[2,2] = ipywidgets.HTML(value="<b>Dimerization Affinities</b>",layout=ipywidgets.Layout(height='auto', width=f'auto'))
-    app_grid[2,3] = ipywidgets.HTML(value="<b>Accessory Protein Expression Levels</b>",layout=ipywidgets.Layout(height='auto', width=f'auto'))
+    app_grid[2,2] = ipywidgets.HTML(value="<div style='text-align: center;''><b>Dimerization Affinities</b></div>",\
+                                    layout=ipywidgets.Layout(height='auto', width=f'auto'))
+    app_grid[2,3] = ipywidgets.HTML(value="<div style='text-align: center;''><b>Accessory Protein Expression Levels</b></div>",\
+                                    layout=ipywidgets.Layout(height='auto', width=f'auto'))
     for K_i in range(num_combos_with_replacement(m,2)):
         app_grid[3+K_i,2] = K_widgets[K_i]
     for A_i in range(m-num_inputs):
