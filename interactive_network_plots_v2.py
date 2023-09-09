@@ -831,7 +831,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
     r_loop = 0.4*r_node
     schematic_fig, schematic_ax = plt.subplots(figsize=(schematic_size,schematic_size),dpi=72)
     node_scales = [-3,3,3*schematic_size,6*schematic_size]
-    K_edge_scales = [-5.1,7,0.5*schematic_size,2*schematic_size]
+    K_edge_scales = [-4.9,7,0.5*schematic_size,2*schematic_size]
 
     if dimer_of_interest is not None:
         dimer_of_interest_array = np.array([[dimer_of_interest]])
@@ -1349,7 +1349,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
     r_loop = 0.4*r_node
     schematic_fig, schematic_ax = plt.subplots(figsize=(schematic_size,schematic_size),dpi=72)
     node_scales = [-3,3,3*schematic_size,6*schematic_size]
-    K_edge_scales = [-5.1,7,0.5*schematic_size,2*schematic_size]
+    K_edge_scales = [-4.9,7,0.5*schematic_size,2*schematic_size]
 
     if dimer_of_interest is not None:
         dimer_of_interest_array = np.array([[dimer_of_interest]])
