@@ -862,7 +862,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
         value=make_nXn_species_names(m)[m+dimer_of_interest],
         description='Output Dimer:',
         disabled=False,
-        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+        layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'),
     )
 
     plot_all_dimers_checkbox = ipywidgets.Checkbox(
@@ -870,7 +870,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
         description='Plot all dimers',
         disabled=False,
         indent=False,
-        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+        layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'),
     )
 
     t_int_input = ipywidgets.BoundedIntText(
@@ -880,7 +880,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
         step=1,
         description='Input points:',
         disabled=False,
-        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+        layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'),
     )
 
     K_widgets = []
@@ -892,7 +892,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
         max=7, # min exponent of base
         step=0.1, # exponent step
         description=make_Kij_names(m, n_input = 1)[K_i]+':',
-        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+        layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'),
     ))
 
     A_widgets = []
@@ -904,7 +904,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
         max=3, # min exponent of base
         step=0.1, # exponent step
         description=f'M_{A_i+2}:',
-        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+        layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'),
     ))
 
     ############## Define Callback
@@ -1136,9 +1136,9 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
     app_grid[1,2] = plot_all_dimers_checkbox
     app_grid[:2,3] = output_dimer_dropdown_widget
     app_grid[2,2] = ipywidgets.HTML(value="<div style='text-align: center;''><b>Dimerization Affinities</b></div>",\
-                                    layout=ipywidgets.Layout(height='auto', width=f'auto'))
+                                    layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'))
     app_grid[2,3] = ipywidgets.HTML(value="<div style='text-align: center;''><b>Accessory Protein Expression Levels</b></div>",\
-                                    layout=ipywidgets.Layout(height='auto', width=f'auto'))
+                                    layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'))
     for K_i in range(num_combos_with_replacement(m,2)):
         app_grid[3+K_i,2] = K_widgets[K_i]
     for A_i in range(m-1):
@@ -1383,7 +1383,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
         value=make_nXn_species_names(m)[m+dimer_of_interest],
         description='Output Dimer:',
         disabled=False,
-        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+        layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'),
     )
 
     t_int_input = ipywidgets.BoundedIntText(
@@ -1393,7 +1393,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
         step=1,
         description='Input points:',
         disabled=False,
-        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+        layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'),
     )
     
     out_range_slider = ipywidgets.FloatRangeSlider(
@@ -1412,7 +1412,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
         value = '<div style="text-align: center;">{}</div>'.format("10^({}) - 10^({})".format(f'{out_range_slider.value[0]:.1f}',f'{out_range_slider.value[1]:.1f}')),
         placeholder='',
         description='',
-        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+        layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'),
     )
 
     K_widgets = []
@@ -1424,7 +1424,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
         max=7, # min exponent of base
         step=0.1, # exponent step
         description=make_Kij_names(m, n_input = 1)[K_i]+':',
-        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+        layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'),
     ))
 
     A_widgets = []
@@ -1436,7 +1436,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
         max=3, # min exponent of base
         step=0.1, # exponent step
         description=f'M_{A_i+1+num_inputs}:',
-        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+        layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'),
     ))
 
     ############## Define Callback
@@ -1666,9 +1666,9 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
     app_grid[0:2,2] = t_int_input
     app_grid[:2,3] = output_dimer_dropdown_widget
     app_grid[2,2] = ipywidgets.HTML(value="<div style='text-align: center;''><b>Dimerization Affinities</b></div>",\
-                                    layout=ipywidgets.Layout(height='auto', width=f'auto'))
+                                    layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'))
     app_grid[2,3] = ipywidgets.HTML(value="<div style='text-align: center;''><b>Accessory Protein Expression Levels</b></div>",\
-                                    layout=ipywidgets.Layout(height='auto', width=f'auto'))
+                                    layout=ipywidgets.Layout(height='auto', width=f'auto',align_items='center', justify_content='center'))
     for K_i in range(num_combos_with_replacement(m,2)):
         app_grid[3+K_i,2] = K_widgets[K_i]
     for A_i in range(m-num_inputs):
