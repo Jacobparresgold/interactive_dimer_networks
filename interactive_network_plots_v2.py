@@ -642,142 +642,176 @@ def make_network_plots_polygon(fig,ax,m, n_input, univs_to_plot, param_sets, dim
 
 
 def plot_responses_oneinput_static(plot_fig, plot_ax,m,param_sets,dimer_of_interest,t,plot_all_dimers):
-  '''
-  plot_fig, plot_ax: Pre-existing figure and axis
-  m: int
+    '''
+    plot_fig, plot_ax: Pre-existing figure and axis
+    m: int
     Number of monomers
-  param_sets: Array of shape (1,num_combos_with_replacement(m,2)+m-1)
+    param_sets: Array of shape (1,num_combos_with_replacement(m,2)+m-1)
     Parameters to simulate
-  dimer_of_interest: int or None
+    dimer_of_interest: int or None
     Dimer to use as output, or None (only if plot_all_dimers)
-  t: int
+    t: int
     Number of input titration points
-  plot_all_dimers: bool
+    plot_all_dimers: bool
     Whether to plot all dimers, or just dimer of interest
-  '''
-  # plot_fig, plot_ax = plt.subplots(figsize=figsize)
+    '''
+    # plot_fig, plot_ax = plt.subplots(figsize=figsize)
 
-  ####### Define plotting parameters
-  # t=120 # Number of input titration points
-  input_lb = -3 # Lower bound for titrating the input monomer species, log10 scale
-  input_ub = 3 # Upper bound for titrating the input monomer species, log10 scale
+    ####### Define plotting parameters
+    # t=120 # Number of input titration points
+    input_lb = -3 # Lower bound for titrating the input monomer species, log10 scale
+    input_ub = 3 # Upper bound for titrating the input monomer species, log10 scale
 
-  out_range = [10**input_lb, 10**input_ub]
-  # plot_all_dimers = False # Whether to plot all dimers, or just dimer of interest
-  min_affinity = 1e-5 # Will not plot dimers below this affinity (assumed not to dimerize)
+    out_range = [10**input_lb, 10**input_ub]
+    # plot_all_dimers = False # Whether to plot all dimers, or just dimer of interest
+    min_affinity = 1e-5 # Will not plot dimers below this affinity (assumed not to dimerize)
 
-  ####### Perform simulation
-  C0,S_all  = simulate_networks(m, num_inputs=1,param_sets=param_sets, t = t, input_lb = input_lb, input_ub = input_ub)
+    ####### Perform simulation
+    C0,S_all  = simulate_networks(m, num_inputs=1,param_sets=param_sets, t = t, input_lb = input_lb, input_ub = input_ub)
 
-  ####### Make initial plot
-  monomer_cmap = plt.get_cmap('Set2')
-  dimer_cmap = plt.get_cmap('tab10')
-  # dimer_cmap = plt.get_cmap('tab20')
+    ####### Make initial plot
+    monomer_cmap = plt.get_cmap('Set2')
+    dimer_cmap = plt.get_cmap('tab10')
+    # dimer_cmap = plt.get_cmap('tab20')
 
-  x_points = np.logspace(input_lb,input_ub,t,endpoint=True)
+    x_points = np.logspace(input_lb,input_ub,t,endpoint=True)
 
-  if plot_all_dimers:
-      for species in range(number_of_species(m)):
-          alpha=0.5
-          if species<m:
-              color = monomer_cmap(species)
-          else:
-              color = dimer_cmap(species-m)
-              if param_sets[0,species-m]<min_affinity:
-                  continue
-          if dimer_of_interest is not None:
-              if species==m+dimer_of_interest:
-                  color='k'
-                  alpha=1
-          plot_ax.plot(x_points,S_all[:,species,0],marker=None,linestyle='-',color=color,\
-                      alpha=alpha,lw=1.5)
-  else:
-      if dimer_of_interest is not None:
-          plot_ax.plot(x_points,S_all[:,m+dimer_of_interest,0],marker=None,linestyle='-',color='k',\
-                          alpha=1,lw=1.5)
-      else:
-          pass
+    if plot_all_dimers:
+        for species in range(number_of_species(m)):
+            alpha=0.5
+            if species<m:
+                color = monomer_cmap(species)
+            else:
+                color = dimer_cmap(species-m)
+                if param_sets[0,species-m]<min_affinity:
+                    continue
+            if dimer_of_interest is not None:
+                if species==m+dimer_of_interest:
+                    color='k'
+                    alpha=1
+            plot_ax.plot(x_points,S_all[:,species,0],marker=None,linestyle='-',color=color,\
+                        alpha=alpha,lw=1.5)
+    else:
+        if dimer_of_interest is not None:
+            plot_ax.plot(x_points,S_all[:,m+dimer_of_interest,0],marker=None,linestyle='-',color='k',\
+                            alpha=1,lw=1.5)
+        else:
+            pass
 
 
-  plot_ax.set_yscale('log')
-  plot_ax.set_xscale('log')
-  plot_ax.set_xlim([10**input_lb,10**input_ub])
-  plot_ax.set_ylim(out_range)
-  plot_ax.xaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
-  plot_ax.yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
-  _ = plot_ax.set_xlabel('Input M1')
-  _ = plot_ax.set_ylabel('Concentration')
+    plot_ax.set_yscale('log')
+    plot_ax.set_xscale('log')
+    plot_ax.set_xlim([10**input_lb,10**input_ub])
+    plot_ax.set_ylim(out_range)
+    plot_ax.xaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
+    plot_ax.yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
+    _ = plot_ax.set_xlabel('Input M1')
+    _ = plot_ax.set_ylabel('Concentration')
 
-  # Create legend, if necessary
-  if plot_all_dimers:
-      patches={}
-      for species in range(m):
-          patches[f'M{species+1}'] = mpatches.Patch(facecolor=monomer_cmap(species),linewidth=0,linestyle='',\
+    # Create legend, if necessary
+    if plot_all_dimers:
+        patches={}
+        for species in range(m):
+            patches[f'M{species+1}'] = mpatches.Patch(facecolor=monomer_cmap(species),linewidth=0,linestyle='',\
                                                     alpha=0.5,label=f'Free M{species+1}',edgecolor=None)
-      for species in range(m,number_of_species(m)):
-          if param_sets[0,species-m]<min_affinity:
-              continue
-          color = dimer_cmap(species-m)
-          alpha=0.5
-          if dimer_of_interest is not None:
-              if species==m+dimer_of_interest:
-                  color='k'
-                  alpha=1
-          patches[f'D{species+1}'] = mpatches.Patch(facecolor=color,linewidth=0,linestyle='',\
+        for species in range(m,number_of_species(m)):
+            if param_sets[0,species-m]<min_affinity:
+                continue
+            color = dimer_cmap(species-m)
+            alpha=0.5
+            if dimer_of_interest is not None:
+                if species==m+dimer_of_interest:
+                    color='k'
+                    alpha=1
+            patches[f'D{species+1}'] = mpatches.Patch(facecolor=color,linewidth=0,linestyle='',\
                                                     alpha=alpha,label=make_nXn_species_names(m = m)[species],\
                                                     edgecolor=None)
-      leg = plot_ax.legend(bbox_to_anchor=(1, 0.5), loc='center left',facecolor='none',\
-          handles=list(patches.values()),\
-          edgecolor='none')
-      _ = plot_ax.set_title('Responses')
-  else:
-    if dimer_of_interest is not None:
-        _ = plot_ax.set_title('Response of {}'.format(make_nXn_species_names(m)[m+dimer_of_interest].replace('_','')))
-    else:
+        leg = plot_ax.legend(bbox_to_anchor=(1, 0.5), loc='center left',facecolor='none',\
+            handles=list(patches.values()),\
+            edgecolor='none')
         _ = plot_ax.set_title('Responses')
+    else:
+        if dimer_of_interest is not None:
+            _ = plot_ax.set_title('Response of {}'.format(make_nXn_species_names(m)[m+dimer_of_interest].replace('_','')))
+        else:
+            _ = plot_ax.set_title('Responses')
 
-  return plot_fig,plot_ax
+    return plot_fig,plot_ax
 
-def network_sandbox_oneinput(m,app_width,app_height,schematic_size,plot_width,plot_height):
-  '''
-  Function to create plotting interface given m, the number of network monomers
-  '''
-  num_cols = 4
-  num_rows = 3+num_combos_with_replacement(m,2)
-  app_width_px = app_width*plt.rcParams['figure.dpi']
-  app_height_px = app_height*plt.rcParams['figure.dpi']
-  app_grid = ipywidgets.GridspecLayout(num_rows,num_cols,width=f'{app_width_px}px',heigth=f'{app_height_px}px')
+def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_width=3,plot_height=2,preset_function=None):
+    '''
+    Function to create plotting interface given m, the number of network monomers
+    '''
+    num_cols = 4
+    num_rows = 3+num_combos_with_replacement(m,2)
+    app_width_px = app_width*plt.rcParams['figure.dpi']
+    app_height_px = app_height*plt.rcParams['figure.dpi']
+    app_grid = ipywidgets.GridspecLayout(num_rows,num_cols,width=f'{app_width_px}px',heigth=f'{app_height_px}px')
 
-  ############## Initialize affinities and expression levels randomly
-  rng = np.random.default_rng()
-  # Affinities
-  K = 10**rng.uniform(-5,7,size=num_combos_with_replacement(m,2))
-  # Expression levels
-  A = 10**rng.uniform(-3,3,size=m-1)
-  param_sets = np.expand_dims(np.hstack((K,A)),axis=0)
-  # Output dimer
-  dimer_of_interest = rng.integers(num_combos_with_replacement(m,2)) # Index of dimer to use as output (D_1_1 = index 0)
+    ############## Initialize affinities and expression levels
+    if preset_function is None:
+        rng = np.random.default_rng()
+        # Affinities
+        K = 10**rng.uniform(-5,7,size=num_combos_with_replacement(m,2))
+        # Expression levels
+        A = 10**rng.uniform(-3,3,size=m-1)
+        param_sets = np.expand_dims(np.hstack((K,A)),axis=0)
+        # Output dimer
+        dimer_of_interest = rng.integers(num_combos_with_replacement(m,2)) # Index of dimer to use as output (D_1_1 = index 0)
+    else:
+        if preset_function=='switch_off':
+            m=3
+            param_sets = np.array([[1e-10, 1e-10, 1e3, 1e-10,1e-02, 1e-10, 1e1, 1e1]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_2_3') - m # Index of dimer to use as output (D_1_1 = index 0)
+        elif preset_function=='switch_on':
+            m=3
+            param_sets = np.array([[1e-10,  1e2, 1e-10, 1e-10,1e1, 1e1, 1e1, 1]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_3_3') - m # Index of dimer to use as output (D_1_1 = index 0)
+        elif preset_function=='bandpass':
+            m=3
+            param_sets = np.array([[1e-10, 1e3, 1, 1e-10, 1e3, 1, 1, 1]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_3_3') - m
+        elif preset_function=='bandstop':
+            m=4
+            param_sets = np.array([[1e-10, 1e3, 1, 1e-10, 1e-10, 1e3, 1e-10, 1e-10, 1e3, 5e+3, 5, 5, 5e-1]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_4_4') - m
+        elif preset_function=='downupdown':
+            m=4
+            param_sets = np.array([[1e-10, 361, 1.4, 10000.0, 1e-10, \
+                                    10000.0, 4819, 144, 18, \
+                                        1e-10, 5, 1, 5.1]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_3_3') - m
+        elif preset_function=='updownup':
+            m=5
+            param_sets = np.array([[1e-10, 10000.0, 765, 0.26, 20.5, \
+                                    1e-10, 1e-10, 3776, 1e-10, \
+                                        12.5, 1e-10, 10000.0, 9442, \
+                                            10000.0, 1e-10, 1.7, 48.6, \
+                                                0.74, 41]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_4_4') - m
+        else:
+            raise ValueError('preset_function not recognized.')
 
-  ############## Plot initial
-  plt.ioff()
+    ############## Plot initial
+    plt.ioff()
 
-  t=120 # Number of input titration points
-  plot_all_dimers = False
-  plot_fig, plot_ax = plt.subplots(figsize=(plot_width,plot_height))
-  plot_fig.subplots_adjust(left=0.2,right=0.9,bottom=0.2,top=0.9)
-  plot_responses_oneinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,plot_all_dimers)
+    t=120 # Number of input titration points
+    plot_all_dimers = False
+    plot_fig, plot_ax = plt.subplots(figsize=(plot_width,plot_height))
+    plot_fig.subplots_adjust(left=0.2,right=0.9,bottom=0.2,top=0.9)
+    plot_responses_oneinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,plot_all_dimers)
 
 
-  ####### Plot Schematic
-  padding=0.1
-  loop_node_ratio = 0.4
-  r_node = (schematic_size-(2*padding))/(2+(4*loop_node_ratio))
-  r_loop = 0.4*r_node
-  schematic_fig, schematic_ax = plt.subplots(figsize=(schematic_size,schematic_size),dpi=72)
-  node_scales = [-3,3,3*schematic_size,6*schematic_size]
-  K_edge_scales = [-5,7,0.5*schematic_size,2*schematic_size]
+    ####### Plot Schematic
+    padding=0.1
+    loop_node_ratio = 0.4
+    r_node = (schematic_size-(2*padding))/(2+(4*loop_node_ratio))
+    r_loop = 0.4*r_node
+    schematic_fig, schematic_ax = plt.subplots(figsize=(schematic_size,schematic_size),dpi=72)
+    node_scales = [-3,3,3*schematic_size,6*schematic_size]
+    K_edge_scales = [-5,7,0.5*schematic_size,2*schematic_size]
 
-  schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
+    schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
                                         n_input=1, # Number of inputs
                                         param_sets=param_sets, # Parameter sets to draw from
                                         univs_to_plot=np.array([0]), # Indicies of param_sets to plot
@@ -794,38 +828,38 @@ def network_sandbox_oneinput(m,app_width,app_height,schematic_size,plot_width,pl
                                         non_output_dimer_color='gray',
                                         upscale_arrowhead=1.7,
                                         node_edge_width=1,
-  )
+    )
 
-  ############## Make Widgets
-  output_dimer_dropdown_widget = ipywidgets.Dropdown(
-      options=[None]+make_nXn_species_names(m)[m:],
-      value=make_nXn_species_names(m)[m+dimer_of_interest],
-      description='Output Dimer',
-      disabled=False,
-      layout=ipywidgets.Layout(height='auto', width=f'auto'),
-  )
+    ############## Make Widgets
+    output_dimer_dropdown_widget = ipywidgets.Dropdown(
+        options=[None]+make_nXn_species_names(m)[m:],
+        value=make_nXn_species_names(m)[m+dimer_of_interest],
+        description='Output Dimer',
+        disabled=False,
+        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+    )
 
-  plot_all_dimers_checkbox = ipywidgets.Checkbox(
-    value=plot_all_dimers,
-    description='Plot responses of all dimers',
-    disabled=False,
-    indent=False,
-    layout=ipywidgets.Layout(height='auto', width=f'auto'),
-  )
+    plot_all_dimers_checkbox = ipywidgets.Checkbox(
+        value=plot_all_dimers,
+        description='Plot responses of all dimers',
+        disabled=False,
+        indent=False,
+        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+    )
 
-  t_int_input = ipywidgets.BoundedIntText(
-    value=t,
-    min=1,
-    max=1000,
-    step=1,
-    description='Number of simulated titration points:',
-    disabled=False,
-    layout=ipywidgets.Layout(height='auto', width=f'auto'),
-  )
+    t_int_input = ipywidgets.BoundedIntText(
+        value=t,
+        min=1,
+        max=1000,
+        step=1,
+        description='Number of simulated titration points:',
+        disabled=False,
+        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+    )
 
-  K_widgets = []
-  for K_i in range(num_combos_with_replacement(m,2)):
-      K_widgets.append(ipywidgets.FloatLogSlider(
+    K_widgets = []
+    for K_i in range(num_combos_with_replacement(m,2)):
+        K_widgets.append(ipywidgets.FloatLogSlider(
         value=param_sets[0,K_i],
         base=10,
         min=-5, # max exponent of base
@@ -834,10 +868,10 @@ def network_sandbox_oneinput(m,app_width,app_height,schematic_size,plot_width,pl
         description=make_Kij_names(m, n_input = 1)[K_i],
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     ))
-  
-  A_widgets = []
-  for A_i in range(m-1):
-      A_widgets.append(ipywidgets.FloatLogSlider(
+
+    A_widgets = []
+    for A_i in range(m-1):
+        A_widgets.append(ipywidgets.FloatLogSlider(
         value=param_sets[0,num_combos_with_replacement(m,2)+A_i],
         base=10,
         min=-3, # max exponent of base
@@ -846,337 +880,409 @@ def network_sandbox_oneinput(m,app_width,app_height,schematic_size,plot_width,pl
         description=f'M_{A_i+2}',
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     ))
-  
-  ############## Define Callback
-  def update_dimer_of_interest(change):
-    nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
-    nonlocal dimer_of_interest
 
-    dimer_of_interest = make_nXn_species_names(m).index(change['new'])-m
+    ############## Define Callback
+    def update_dimer_of_interest(change):
+        nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
+        nonlocal dimer_of_interest
 
-    plot_ax.clear()
-    schematic_ax.clear()
-    plot_fig,plot_ax = plot_responses_oneinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,plot_all_dimers)
+        dimer_of_interest = make_nXn_species_names(m).index(change['new'])-m
 
-    schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
-                                        n_input=1, # Number of inputs
-                                        param_sets=param_sets, # Parameter sets to draw from
-                                        univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                        dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
-                                        input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
-                                        ncols = 1, # Number of columns in figure
-                                        r_node = r_node, # Radius of nodes around center
-                                        r_loop = r_loop, # Radius of loops around nodes 
-                                        node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
-                                        K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
-                                        input_cmap='Set2', # Colormap for nodes
-                                        fontname='Dejavu Sans', # Font name
-                                        fontsize=12, # Font size
-                                        non_output_dimer_color='gray',
-                                        upscale_arrowhead=1.7,
-                                        node_edge_width=1,
-    )
+        plot_ax.clear()
+        schematic_ax.clear()
+        plot_fig,plot_ax = plot_responses_oneinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,plot_all_dimers)
 
-    plot_fig.canvas.draw()
-    plot_fig.canvas.flush_events()
+        schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
+                                            n_input=1, # Number of inputs
+                                            param_sets=param_sets, # Parameter sets to draw from
+                                            univs_to_plot=np.array([0]), # Indicies of param_sets to plot
+                                            dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                            input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
+                                            ncols = 1, # Number of columns in figure
+                                            r_node = r_node, # Radius of nodes around center
+                                            r_loop = r_loop, # Radius of loops around nodes 
+                                            node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
+                                            K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
+                                            input_cmap='Set2', # Colormap for nodes
+                                            fontname='Dejavu Sans', # Font name
+                                            fontsize=12, # Font size
+                                            non_output_dimer_color='gray',
+                                            upscale_arrowhead=1.7,
+                                            node_edge_width=1,
+        )
 
-    schematic_fig.canvas.draw()
-    schematic_fig.canvas.flush_events()
+        plot_fig.canvas.draw()
+        plot_fig.canvas.flush_events()
+
+        schematic_fig.canvas.draw()
+        schematic_fig.canvas.flush_events()
+
+        return
+
+    def update_plot_all_dimers(change):
+        nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
+        nonlocal plot_all_dimers
+        plot_all_dimers = change['new']
+
+        plot_ax.clear()
+        schematic_ax.clear()
+        plot_fig,plot_ax = plot_responses_oneinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,plot_all_dimers)
+
+        schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
+                                            n_input=1, # Number of inputs
+                                            param_sets=param_sets, # Parameter sets to draw from
+                                            univs_to_plot=np.array([0]), # Indicies of param_sets to plot
+                                            dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                            input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
+                                            ncols = 1, # Number of columns in figure
+                                            r_node = r_node, # Radius of nodes around center
+                                            r_loop = r_loop, # Radius of loops around nodes 
+                                            node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
+                                            K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
+                                            input_cmap='Set2', # Colormap for nodes
+                                            fontname='Dejavu Sans', # Font name
+                                            fontsize=12, # Font size
+                                            non_output_dimer_color='gray',
+                                            upscale_arrowhead=1.7,
+                                            node_edge_width=1,
+        )
+
+        if plot_all_dimers:
+            plot_fig.subplots_adjust(right=0.65)  # Increase the right margin
+        else:
+            plot_fig.subplots_adjust(right=0.9)  # Reset the right margin
+
+        plot_fig.canvas.draw()
+        plot_fig.canvas.flush_events()
+
+        schematic_fig.canvas.draw()
+        schematic_fig.canvas.flush_events()
+
+        return
+
+    def update_t(change):
+        nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
+        nonlocal t
+
+        t = change['new']
+
+        plot_ax.clear()
+        schematic_ax.clear()
+        plot_fig,plot_ax = plot_responses_oneinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,plot_all_dimers)
+
+        schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
+                                            n_input=1, # Number of inputs
+                                            param_sets=param_sets, # Parameter sets to draw from
+                                            univs_to_plot=np.array([0]), # Indicies of param_sets to plot
+                                            dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                            input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
+                                            ncols = 1, # Number of columns in figure
+                                            r_node = r_node, # Radius of nodes around center
+                                            r_loop = r_loop, # Radius of loops around nodes 
+                                            node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
+                                            K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
+                                            input_cmap='Set2', # Colormap for nodes
+                                            fontname='Dejavu Sans', # Font name
+                                            fontsize=12, # Font size
+                                            non_output_dimer_color='gray',
+                                            upscale_arrowhead=1.7,
+                                            node_edge_width=1,
+        )
+
+        plot_fig.canvas.draw()
+        plot_fig.canvas.flush_events()
+
+        schematic_fig.canvas.draw()
+        schematic_fig.canvas.flush_events()
+
+        return
+
+    output_dimer_dropdown_widget.observe(update_dimer_of_interest, names='value')
+    plot_all_dimers_checkbox.observe(update_plot_all_dimers, names='value')
+    t_int_input.observe(update_t, names='value')
+
+    K_update_functions = []
+    for K_i in range(num_combos_with_replacement(m,2)):
+        def temp_update_func(change,K_i=K_i):
+            nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
+            nonlocal param_sets
+
+            param_sets[0,K_i] = change['new']
+
+            plot_ax.clear()
+            schematic_ax.clear()
+            plot_fig,plot_ax = plot_responses_oneinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,plot_all_dimers)
+
+            schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
+                                                n_input=1, # Number of inputs
+                                                param_sets=param_sets, # Parameter sets to draw from
+                                                univs_to_plot=np.array([0]), # Indicies of param_sets to plot
+                                                dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                                input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
+                                                ncols = 1, # Number of columns in figure
+                                                r_node = r_node, # Radius of nodes around center
+                                                r_loop = r_loop, # Radius of loops around nodes 
+                                                node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
+                                                K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
+                                                input_cmap='Set2', # Colormap for nodes
+                                                fontname='Dejavu Sans', # Font name
+                                                fontsize=12, # Font size
+                                                non_output_dimer_color='gray',
+                                                upscale_arrowhead=1.7,
+                                                node_edge_width=1,
+            )
+
+            plot_fig.canvas.draw()
+            plot_fig.canvas.flush_events()
+
+            schematic_fig.canvas.draw()
+            schematic_fig.canvas.flush_events()
+
+            return
+
+        K_update_functions.append(temp_update_func)
+        K_widgets[K_i].observe(temp_update_func, names='value')
+
+    A_update_functions = []
+    for A_i in range(m-1):
+        def temp_update_func(change,A_i=A_i):
+            nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
+            nonlocal param_sets
+
+            param_sets[0,num_combos_with_replacement(m,2)+A_i] = change['new']
+
+            plot_ax.clear()
+            schematic_ax.clear()
+            plot_fig,plot_ax = plot_responses_oneinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,plot_all_dimers)
+
+            schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
+                                                n_input=1, # Number of inputs
+                                                param_sets=param_sets, # Parameter sets to draw from
+                                                univs_to_plot=np.array([0]), # Indicies of param_sets to plot
+                                                dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                                input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
+                                                ncols = 1, # Number of columns in figure
+                                                r_node = r_node, # Radius of nodes around center
+                                                r_loop = r_loop, # Radius of loops around nodes 
+                                                node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
+                                                K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
+                                                input_cmap='Set2', # Colormap for nodes
+                                                fontname='Dejavu Sans', # Font name
+                                                fontsize=12, # Font size
+                                                non_output_dimer_color='gray',
+                                                upscale_arrowhead=1.7,
+                                                node_edge_width=1,
+            )
+
+            plot_fig.canvas.draw()
+            plot_fig.canvas.flush_events()
+
+            schematic_fig.canvas.draw()
+            schematic_fig.canvas.flush_events()
+
+            return
+
+        A_update_functions.append(temp_update_func)
+        A_widgets[A_i].observe(temp_update_func, names='value')
+
+    ######################################
+
+    ############## Define App
+    # plot_fig.canvas.capture_scroll = True # If true then scrolling while the mouse is over the canvas will not move the entire notebook
+    plot_fig.canvas.header_visible = False # Hide the Figure name at the top of the figure
+    plot_fig.canvas.toolbar_visible = True
+    plot_fig.canvas.resizable = False
+
+    schematic_fig.canvas.header_visible = False # Hide the Figure name at the top of the figure
+    schematic_fig.canvas.toolbar_visible = False
+    schematic_fig.canvas.footer_visible = False
+    schematic_fig.canvas.resizable = False
+
+    app_grid[:,0] = schematic_fig.canvas
+    app_grid[:,1] = plot_fig.canvas
+    app_grid[0,2] = plot_all_dimers_checkbox
+    app_grid[1,2] = t_int_input
+    app_grid[:2,3] = output_dimer_dropdown_widget
+    app_grid[2,2] = ipywidgets.HTML(value="<b>Dimerization Affinities</b>",layout=ipywidgets.Layout(height='auto', width=f'auto'))
+    app_grid[2,3] = ipywidgets.HTML(value="<b>Accessory Protein Expression Levels</b>",layout=ipywidgets.Layout(height='auto', width=f'auto'))
+    for K_i in range(num_combos_with_replacement(m,2)):
+        app_grid[3+K_i,2] = K_widgets[K_i]
+    for A_i in range(m-1):
+        app_grid[3+A_i,3] = A_widgets[A_i]
+
+    # Display the interface
+    display(app_grid)
 
     return
-
-  def update_plot_all_dimers(change):
-    nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
-    nonlocal plot_all_dimers
-    plot_all_dimers = change['new']
-
-    plot_ax.clear()
-    schematic_ax.clear()
-    plot_fig,plot_ax = plot_responses_oneinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,plot_all_dimers)
-
-    schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
-                                        n_input=1, # Number of inputs
-                                        param_sets=param_sets, # Parameter sets to draw from
-                                        univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                        dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
-                                        input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
-                                        ncols = 1, # Number of columns in figure
-                                        r_node = r_node, # Radius of nodes around center
-                                        r_loop = r_loop, # Radius of loops around nodes 
-                                        node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
-                                        K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
-                                        input_cmap='Set2', # Colormap for nodes
-                                        fontname='Dejavu Sans', # Font name
-                                        fontsize=12, # Font size
-                                        non_output_dimer_color='gray',
-                                        upscale_arrowhead=1.7,
-                                        node_edge_width=1,
-    )
-
-    if plot_all_dimers:
-      plot_fig.subplots_adjust(right=0.65)  # Increase the right margin
-    else:
-      plot_fig.subplots_adjust(right=0.9)  # Reset the right margin
-
-    plot_fig.canvas.draw()
-    plot_fig.canvas.flush_events()
-
-    schematic_fig.canvas.draw()
-    schematic_fig.canvas.flush_events()
-
-    return
-
-  def update_t(change):
-    nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
-    nonlocal t
-
-    t = change['new']
-
-    plot_ax.clear()
-    schematic_ax.clear()
-    plot_fig,plot_ax = plot_responses_oneinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,plot_all_dimers)
-
-    schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
-                                        n_input=1, # Number of inputs
-                                        param_sets=param_sets, # Parameter sets to draw from
-                                        univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                        dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
-                                        input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
-                                        ncols = 1, # Number of columns in figure
-                                        r_node = r_node, # Radius of nodes around center
-                                        r_loop = r_loop, # Radius of loops around nodes 
-                                        node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
-                                        K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
-                                        input_cmap='Set2', # Colormap for nodes
-                                        fontname='Dejavu Sans', # Font name
-                                        fontsize=12, # Font size
-                                        non_output_dimer_color='gray',
-                                        upscale_arrowhead=1.7,
-                                        node_edge_width=1,
-    )
-
-    plot_fig.canvas.draw()
-    plot_fig.canvas.flush_events()
-
-    schematic_fig.canvas.draw()
-    schematic_fig.canvas.flush_events()
-
-    return
-  
-  output_dimer_dropdown_widget.observe(update_dimer_of_interest, names='value')
-  plot_all_dimers_checkbox.observe(update_plot_all_dimers, names='value')
-  t_int_input.observe(update_t, names='value')
-
-  K_update_functions = []
-  for K_i in range(num_combos_with_replacement(m,2)):
-    def temp_update_func(change,K_i=K_i):
-      nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
-      nonlocal param_sets
-
-      param_sets[0,K_i] = change['new']
-
-      plot_ax.clear()
-      schematic_ax.clear()
-      plot_fig,plot_ax = plot_responses_oneinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,plot_all_dimers)
-
-      schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
-                                          n_input=1, # Number of inputs
-                                          param_sets=param_sets, # Parameter sets to draw from
-                                          univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                          dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
-                                          input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
-                                          ncols = 1, # Number of columns in figure
-                                          r_node = r_node, # Radius of nodes around center
-                                          r_loop = r_loop, # Radius of loops around nodes 
-                                          node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
-                                          K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
-                                          input_cmap='Set2', # Colormap for nodes
-                                          fontname='Dejavu Sans', # Font name
-                                          fontsize=12, # Font size
-                                          non_output_dimer_color='gray',
-                                          upscale_arrowhead=1.7,
-                                          node_edge_width=1,
-      )
-
-      plot_fig.canvas.draw()
-      plot_fig.canvas.flush_events()
-
-      schematic_fig.canvas.draw()
-      schematic_fig.canvas.flush_events()
-
-      return
-
-    K_update_functions.append(temp_update_func)
-    K_widgets[K_i].observe(temp_update_func, names='value')
-  
-  A_update_functions = []
-  for A_i in range(m-1):
-    def temp_update_func(change,A_i=A_i):
-      nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
-      nonlocal param_sets
-
-      param_sets[0,num_combos_with_replacement(m,2)+A_i] = change['new']
-
-      plot_ax.clear()
-      schematic_ax.clear()
-      plot_fig,plot_ax = plot_responses_oneinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t,plot_all_dimers)
-
-      schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
-                                          n_input=1, # Number of inputs
-                                          param_sets=param_sets, # Parameter sets to draw from
-                                          univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                          dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
-                                          input_node_values=np.array([0]), # Abundances to use for input node(s), log scale
-                                          ncols = 1, # Number of columns in figure
-                                          r_node = r_node, # Radius of nodes around center
-                                          r_loop = r_loop, # Radius of loops around nodes 
-                                          node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
-                                          K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
-                                          input_cmap='Set2', # Colormap for nodes
-                                          fontname='Dejavu Sans', # Font name
-                                          fontsize=12, # Font size
-                                          non_output_dimer_color='gray',
-                                          upscale_arrowhead=1.7,
-                                          node_edge_width=1,
-      )
-
-      plot_fig.canvas.draw()
-      plot_fig.canvas.flush_events()
-
-      schematic_fig.canvas.draw()
-      schematic_fig.canvas.flush_events()
-
-      return
-
-    A_update_functions.append(temp_update_func)
-    A_widgets[A_i].observe(temp_update_func, names='value')
-
-  ######################################
-
-  ############## Define App
-  # plot_fig.canvas.capture_scroll = True # If true then scrolling while the mouse is over the canvas will not move the entire notebook
-  plot_fig.canvas.header_visible = False # Hide the Figure name at the top of the figure
-  plot_fig.canvas.toolbar_visible = True
-  plot_fig.canvas.resizable = False
-
-  schematic_fig.canvas.header_visible = False # Hide the Figure name at the top of the figure
-  schematic_fig.canvas.toolbar_visible = False
-  schematic_fig.canvas.footer_visible = False
-  schematic_fig.canvas.resizable = False
-
-  app_grid[:,0] = schematic_fig.canvas
-  app_grid[:,1] = plot_fig.canvas
-  app_grid[0,2] = plot_all_dimers_checkbox
-  app_grid[1,2] = t_int_input
-  app_grid[:2,3] = output_dimer_dropdown_widget
-  app_grid[2,2] = ipywidgets.HTML(value="<b>Dimerization Affinities</b>",layout=ipywidgets.Layout(height='auto', width=f'auto'))
-  app_grid[2,3] = ipywidgets.HTML(value="<b>Accessory Protein Expression Levels</b>",layout=ipywidgets.Layout(height='auto', width=f'auto'))
-  for K_i in range(num_combos_with_replacement(m,2)):
-      app_grid[3+K_i,2] = K_widgets[K_i]
-  for A_i in range(m-1):
-      app_grid[3+A_i,3] = A_widgets[A_i]
-
-  # Display the interface
-  display(app_grid)
-
-  return
 
 def plot_responses_twoinput_static(plot_fig, plot_ax,m,param_sets,dimer_of_interest,t):
-  '''
-  plot_fig, plot_ax: Pre-existing figure and axis
-  m: int
+    '''
+    plot_fig, plot_ax: Pre-existing figure and axis
+    m: int
     Number of monomers
-  param_sets: Array of shape (1,num_combos_with_replacement(m,2)+m-1)
+    param_sets: Array of shape (1,num_combos_with_replacement(m,2)+m-1)
     Parameters to simulate
-  dimer_of_interest: int
+    dimer_of_interest: int
     Dimer to use as output
-  t: int
+    t: int
     Number of input titration points
-  '''
-  num_inputs = 2
+    '''
+    num_inputs = 2
 
-  ####### Define plotting parameters
-  # t=120 # Number of input titration points
-  input_lb = -3 # Lower bound for titrating the input monomer species, log10 scale
-  input_ub = 3 # Upper bound for titrating the input monomer species, log10 scale
+    ####### Define plotting parameters
+    # t=120 # Number of input titration points
+    input_lb = -3 # Lower bound for titrating the input monomer species, log10 scale
+    input_ub = 3 # Upper bound for titrating the input monomer species, log10 scale
 
-  out_range = [10**input_lb, 10**input_ub]
-  min_affinity = 1e-5 # Will not plot dimers below this affinity (assumed not to dimerize)
+    out_range = [10**input_lb, 10**input_ub]
+    min_affinity = 1e-5 # Will not plot dimers below this affinity (assumed not to dimerize)
 
-  ####### Perform simulation
-  C0,S_all  = simulate_networks(m, num_inputs=num_inputs,param_sets=param_sets, t = t, input_lb = input_lb, input_ub = input_ub)
+    ####### Perform simulation
+    C0,S_all  = simulate_networks(m, num_inputs=num_inputs,param_sets=param_sets, t = t, input_lb = input_lb, input_ub = input_ub)
 
-  ####### Make initial plot
-  cmap = plt.get_cmap('viridis')
-  x_points = np.logspace(input_lb,input_ub,t,endpoint=True)
-  
-  # Need to take transpose so that M1 appears on X-axis
-  matrix = plot_ax.pcolormesh(x_points,x_points,S_all[:,m+dimer_of_interest,0].reshape((t,t)).T,\
-                                  cmap = cmap,norm=mcolors.LogNorm(vmin=out_range[0],vmax=out_range[1]),\
-                                  shading = 'nearest',rasterized=True)
-  # shading='gouraud' or shading='nearest'
-  plot_ax.xaxis.set_ticks_position("bottom")
-  plot_ax.set_xscale('log')
-  plot_ax.set_yscale('log')
-  plot_ax.set_xlabel(f'Input M1')
-  plot_ax.set_ylabel(f'Input M2')
-  plot_ax.set_xlim([10**input_lb,10**input_ub])
-  plot_ax.set_ylim([10**input_lb,10**input_ub])
-  plot_ax.set_xticks([1e-3,1e-1,1e1,1e3])
-  plot_ax.set_yticks([1e-3,1e-1,1e1,1e3])
-  plot_ax.xaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
-  plot_ax.yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
-  _ = plot_ax.set_title('Response of {}'.format(make_nXn_species_names(m=m)[m+dimer_of_interest].replace('_','')))
-  # Add colorbar
-  divider = make_axes_locatable(plot_ax)
-  cax1 = divider.append_axes("right", size="5%", pad=0.05)
-  plot_fig.colorbar(matrix,cax=cax1,label='Concentration')
-  cax1.yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
+    ####### Make initial plot
+    cmap = plt.get_cmap('viridis')
+    x_points = np.logspace(input_lb,input_ub,t,endpoint=True)
 
-  return plot_fig,plot_ax
+    # Need to take transpose so that M1 appears on X-axis
+    matrix = plot_ax.pcolormesh(x_points,x_points,S_all[:,m+dimer_of_interest,0].reshape((t,t)).T,\
+                                    cmap = cmap,norm=mcolors.LogNorm(vmin=out_range[0],vmax=out_range[1]),\
+                                    shading = 'nearest',rasterized=True)
+    # shading='gouraud' or shading='nearest'
+    plot_ax.xaxis.set_ticks_position("bottom")
+    plot_ax.set_xscale('log')
+    plot_ax.set_yscale('log')
+    plot_ax.set_xlabel(f'Input M1')
+    plot_ax.set_ylabel(f'Input M2')
+    plot_ax.set_xlim([10**input_lb,10**input_ub])
+    plot_ax.set_ylim([10**input_lb,10**input_ub])
+    plot_ax.set_xticks([1e-3,1e-1,1e1,1e3])
+    plot_ax.set_yticks([1e-3,1e-1,1e1,1e3])
+    plot_ax.xaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
+    plot_ax.yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
+    _ = plot_ax.set_title('Response of {}'.format(make_nXn_species_names(m=m)[m+dimer_of_interest].replace('_','')))
+    # Add colorbar
+    divider = make_axes_locatable(plot_ax)
+    cax1 = divider.append_axes("right", size="5%", pad=0.05)
+    plot_fig.colorbar(matrix,cax=cax1,label='Concentration')
+    cax1.yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
 
-def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_width,plot_height):
-  '''
-  Function to create plotting interface given m, the number of network monomers
-  '''
-  num_inputs = 2
+    return plot_fig,plot_ax
 
-  num_cols = 4
-  num_rows = 3+num_combos_with_replacement(m,2)
-  app_width_px = app_width*plt.rcParams['figure.dpi']
-  app_height_px = app_height*plt.rcParams['figure.dpi']
-  app_grid = ipywidgets.GridspecLayout(num_rows,num_cols,width=f'{app_width_px}px',heigth=f'{app_height_px}px')
+def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_width,plot_height,preset_function=None):
+    '''
+    Function to create plotting interface given m, the number of network monomers
+    '''
+    num_inputs = 2
 
-  ############## Initialize affinities and expression levels randomly
-  rng = np.random.default_rng()
-  # Affinities
-  K = 10**rng.uniform(-5,7,size=num_combos_with_replacement(m,2))
-  # Expression levels
-  A = 10**rng.uniform(-3,3,size=m-num_inputs)
-  param_sets = np.expand_dims(np.hstack((K,A)),axis=0)
-  # Output dimer
-  dimer_of_interest = rng.integers(num_combos_with_replacement(m,2)) # Index of dimer to use as output (D_1_1 = index 0)
+    num_cols = 4
+    num_rows = 3+num_combos_with_replacement(m,2)
+    app_width_px = app_width*plt.rcParams['figure.dpi']
+    app_height_px = app_height*plt.rcParams['figure.dpi']
+    app_grid = ipywidgets.GridspecLayout(num_rows,num_cols,width=f'{app_width_px}px',heigth=f'{app_height_px}px')
 
-  ############## Plot initial
-  plt.ioff()
+    ############## Initialize affinities and expression levels
+    if preset_function is None:
+        rng = np.random.default_rng()
+        # Affinities
+        K = 10**rng.uniform(-5,7,size=num_combos_with_replacement(m,2))
+        # Expression levels
+        A = 10**rng.uniform(-3,3,size=m-num_inputs)
+        param_sets = np.expand_dims(np.hstack((K,A)),axis=0)
+        # Output dimer
+        dimer_of_interest = rng.integers(num_combos_with_replacement(m,2)) # Index of dimer to use as output (D_1_1 = index 0)
+    else:
+        if preset_function=='ratio':
+            m=3
+            param_sets = np.array([[1e-10,1e-10, 1e2,1e-10,1e3,1e-10,1e0]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_1_3') - m # Index of dimer to use as output (D_1_1 = index 0)
+        elif preset_function=='A=B':
+            m=3
+            param_sets = np.array([[1e-10, 100000.0, 14003, 1e-10, \
+                                    14005, 100000.0, 1.3]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_3_3') - m # Index of dimer to use as output (D_1_1 = index 0)
+        elif preset_function=='NOR':
+            m=3
+            param_sets = np.array([[1e-10, 1e-10, 100000.0, \
+                                    1e-10, 100000.0, 1623, 1.86]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_3_3') - m # Index of dimer to use as output (D_1_1 = index 0)
+        elif preset_function=='ANOTB':
+            if m==3:
+                param_sets = np.array([[1e-10, 1e-10, 0.14, \
+                                        1e-10, 100000.0, 1.16, 1.75]])
+                dimer_of_interest = make_nXn_species_names(m).index('D_1_3') - m # Index of dimer to use as output (D_1_1 = index 0)
+            elif m==4:
+                param_sets = np.array([[3.0, 1e-10, 3.0, 10000.0, 1e-10, 10000.0, 1e-10, 1e-10, 1e-10, 1e-10, 1.0, 1.0]])
+                dimer_of_interest = make_nXn_species_names(m).index('D_1_3') - m # Index of dimer to use as output (D_1_1 = index 0)
+            else:
+                m=4
+                param_sets = np.array([[3.0, 1e-10, 3.0, 10000.0, 1e-10, 10000.0, 1e-10, 1e-10, 1e-10, 1e-10, 1.0, 1.0]])
+                dimer_of_interest = make_nXn_species_names(m).index('D_1_3') - m # Index of dimer to use as output (D_1_1 = index 0)
+        elif preset_function=='A!=B':
+            m=4
+            param_sets = np.array([[1e-10, 10000.0, 254, 1e-10, 1e-10, 255, \
+                            1e-10, 1e-10, 10000.0, \
+                                0.14, 24, 23]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_4_4') - m # Index of dimer to use as output (D_1_1 = index 0)
+        elif preset_function=='NAND':
+            m=4
+            param_sets = np.array([[50.0, 1e-10, 1e-10, 10000.0, 50.0, 10000.0, 1e-10, 1e-10, 10000.0, 1e-10, 1.0, 1.0]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_3_4') - m # Index of dimer to use as output (D_1_1 = index 0)
+        elif preset_function=='AND':
+            m=4
+            param_sets = np.array([[1500, 9, 1e-10, 100000.0,  \
+                                    1500, 100000.0, 1e-10, 100, 1e-10, \
+                                        100, 0.55, 0.55]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_1_2') - m
+        elif preset_function=='OR':
+            m=4
+            param_sets = np.array([[1e-10, 1e-10, 10000.0, 1e-10, \
+                            1e-10, 10000.0, 1e-10, 1e-10, 10000.0, \
+                                2.16, 20.9, 20]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_4_4') - m # Index of dimer to use as output (D_1_1 = index 0)
+        elif preset_function=='2D_bandpass':
+            m=5
+            param_sets = np.array([[1e-10, 1e-10, 1e-10, 10000.0, 20.0, 1e-10, 10000.0, 1e-10, 20.0, 1e-10,\
+                            1e-10, 10000.0, 1e-10, 10000.0, 100.0, 5.0, 5.0, 3.7]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_5_5') - m # Index of dimer to use as output (D_1_1 = index 0)
+        elif preset_function=='XNOR':
+            m=5
+            param_sets = np.array([[
+                1e-10, 1e-10, 1e-10, 1e4, 1e-10, 
+                1e-10, 1e4, 1e-10, 1e-10, 
+                1e-10, 1e4, 1e4, 
+                1e-10, 1e4,
+                1e4, 
+                2.3, 2.3, 1.29]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_5_5') - m # Index of dimer to use as output (D_1_1 = index 0)
+        elif preset_function=='XOR':
+            m=6
+            param_sets = np.array([[1e-10, 1e-10, 1e-10, 1e-10, 1e-10, 10000.0, 1e-10, 10000.0, 1e-10, 1e-10, 1e-10, \
+                            1e-10, 1e-10, 10000.0, 10000.0, 100.0, 10000.0, 1e-10, 1e-10, 10000.0, 1e-10, 2.0, 0.1, 1.0, 2.0]])
+            dimer_of_interest = make_nXn_species_names(m).index('D_4_4') - m # Index of dimer to use as output (D_1_1 = index 0)
+        else:
+            raise ValueError('preset_function not recognized.')
 
-  t=30 # Number of input titration points
+    ############## Plot initial
+    plt.ioff()
 
-  plot_fig, plot_ax = plt.subplots(figsize=(plot_width,plot_height))
-  plot_fig.subplots_adjust(left=0.2,right=0.7,bottom=0.2,top=0.9)
-  plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
+    t=30 # Number of input titration points
+
+    plot_fig, plot_ax = plt.subplots(figsize=(plot_width,plot_height))
+    plot_fig.subplots_adjust(left=0.2,right=0.7,bottom=0.2,top=0.9)
+    plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
 
 
-  ####### Plot Schematic
-  padding=0.1
-  loop_node_ratio = 0.4
-  r_node = (schematic_size-(2*padding))/(2+(4*loop_node_ratio))
-  r_loop = 0.4*r_node
-  schematic_fig, schematic_ax = plt.subplots(figsize=(schematic_size,schematic_size),dpi=72)
-  node_scales = [-3,3,3*schematic_size,6*schematic_size]
-  K_edge_scales = [-5,7,0.5*schematic_size,2*schematic_size]
+    ####### Plot Schematic
+    padding=0.1
+    loop_node_ratio = 0.4
+    r_node = (schematic_size-(2*padding))/(2+(4*loop_node_ratio))
+    r_loop = 0.4*r_node
+    schematic_fig, schematic_ax = plt.subplots(figsize=(schematic_size,schematic_size),dpi=72)
+    node_scales = [-3,3,3*schematic_size,6*schematic_size]
+    K_edge_scales = [-5,7,0.5*schematic_size,2*schematic_size]
 
-  schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
+    schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
                                         n_input=num_inputs, # Number of inputs
                                         param_sets=param_sets, # Parameter sets to draw from
                                         univs_to_plot=np.array([0]), # Indicies of param_sets to plot
@@ -1193,30 +1299,30 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_width,pl
                                         non_output_dimer_color='gray',
                                         upscale_arrowhead=1.7,
                                         node_edge_width=1,
-  )
+    )
 
-  ############## Make Widgets
-  output_dimer_dropdown_widget = ipywidgets.Dropdown(
-      options=make_nXn_species_names(m)[m:],
-      value=make_nXn_species_names(m)[m+dimer_of_interest],
-      description='Output Dimer',
-      disabled=False,
-      layout=ipywidgets.Layout(height='auto', width=f'auto'),
-  )
+    ############## Make Widgets
+    output_dimer_dropdown_widget = ipywidgets.Dropdown(
+        options=make_nXn_species_names(m)[m:],
+        value=make_nXn_species_names(m)[m+dimer_of_interest],
+        description='Output Dimer',
+        disabled=False,
+        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+    )
 
-  t_int_input = ipywidgets.BoundedIntText(
-    value=t,
-    min=1,
-    max=1000,
-    step=1,
-    description='Number of simulated titration points:',
-    disabled=False,
-    layout=ipywidgets.Layout(height='auto', width=f'auto'),
-  )
+    t_int_input = ipywidgets.BoundedIntText(
+        value=t,
+        min=1,
+        max=1000,
+        step=1,
+        description='Number of simulated titration points:',
+        disabled=False,
+        layout=ipywidgets.Layout(height='auto', width=f'auto'),
+    )
 
-  K_widgets = []
-  for K_i in range(num_combos_with_replacement(m,2)):
-      K_widgets.append(ipywidgets.FloatLogSlider(
+    K_widgets = []
+    for K_i in range(num_combos_with_replacement(m,2)):
+        K_widgets.append(ipywidgets.FloatLogSlider(
         value=param_sets[0,K_i],
         base=10,
         min=-5, # max exponent of base
@@ -1226,9 +1332,9 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_width,pl
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     ))
 
-  A_widgets = []
-  for A_i in range(m-num_inputs):
-      A_widgets.append(ipywidgets.FloatLogSlider(
+    A_widgets = []
+    for A_i in range(m-num_inputs):
+        A_widgets.append(ipywidgets.FloatLogSlider(
         value=param_sets[0,num_combos_with_replacement(m,2)+A_i],
         base=10,
         min=-3, # max exponent of base
@@ -1238,194 +1344,194 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_width,pl
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     ))
 
-  ############## Define Callback
-  def update_dimer_of_interest(change):
-    nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
-    nonlocal dimer_of_interest
+    ############## Define Callback
+    def update_dimer_of_interest(change):
+        nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
+        nonlocal dimer_of_interest
 
-    dimer_of_interest = make_nXn_species_names(m).index(change['new'])-m
+        dimer_of_interest = make_nXn_species_names(m).index(change['new'])-m
 
-    plot_ax.clear()
-    schematic_ax.clear()
-    plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
+        plot_ax.clear()
+        schematic_ax.clear()
+        plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
 
-    schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
-                                        n_input=num_inputs, # Number of inputs
-                                        param_sets=param_sets, # Parameter sets to draw from
-                                        univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                        dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
-                                        input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
-                                        ncols = 1, # Number of columns in figure
-                                        r_node = r_node, # Radius of nodes around center
-                                        r_loop = r_loop, # Radius of loops around nodes
-                                        node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
-                                        K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
-                                        input_cmap='Set2', # Colormap for nodes
-                                        fontname='Dejavu Sans', # Font name
-                                        fontsize=12, # Font size
-                                        non_output_dimer_color='gray',
-                                        upscale_arrowhead=1.7,
-                                        node_edge_width=1,
-    )
+        schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
+                                            n_input=num_inputs, # Number of inputs
+                                            param_sets=param_sets, # Parameter sets to draw from
+                                            univs_to_plot=np.array([0]), # Indicies of param_sets to plot
+                                            dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                            input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
+                                            ncols = 1, # Number of columns in figure
+                                            r_node = r_node, # Radius of nodes around center
+                                            r_loop = r_loop, # Radius of loops around nodes
+                                            node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
+                                            K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
+                                            input_cmap='Set2', # Colormap for nodes
+                                            fontname='Dejavu Sans', # Font name
+                                            fontsize=12, # Font size
+                                            non_output_dimer_color='gray',
+                                            upscale_arrowhead=1.7,
+                                            node_edge_width=1,
+        )
 
-    plot_fig.canvas.draw()
-    plot_fig.canvas.flush_events()
+        plot_fig.canvas.draw()
+        plot_fig.canvas.flush_events()
 
-    schematic_fig.canvas.draw()
-    schematic_fig.canvas.flush_events()
+        schematic_fig.canvas.draw()
+        schematic_fig.canvas.flush_events()
+
+        return
+
+    def update_t(change):
+        nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
+        nonlocal t
+
+        t = change['new']
+
+        plot_ax.clear()
+        schematic_ax.clear()
+        plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
+
+        schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
+                                            n_input=num_inputs, # Number of inputs
+                                            param_sets=param_sets, # Parameter sets to draw from
+                                            univs_to_plot=np.array([0]), # Indicies of param_sets to plot
+                                            dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                            input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
+                                            ncols = 1, # Number of columns in figure
+                                            r_node = r_node, # Radius of nodes around center
+                                            r_loop = r_loop, # Radius of loops around nodes
+                                            node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
+                                            K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
+                                            input_cmap='Set2', # Colormap for nodes
+                                            fontname='Dejavu Sans', # Font name
+                                            fontsize=12, # Font size
+                                            non_output_dimer_color='gray',
+                                            upscale_arrowhead=1.7,
+                                            node_edge_width=1,
+        )
+
+        plot_fig.canvas.draw()
+        plot_fig.canvas.flush_events()
+
+        schematic_fig.canvas.draw()
+        schematic_fig.canvas.flush_events()
+
+        return
+
+    output_dimer_dropdown_widget.observe(update_dimer_of_interest, names='value')
+    t_int_input.observe(update_t, names='value')
+
+    K_update_functions = []
+    for K_i in range(num_combos_with_replacement(m,2)):
+        def temp_update_func(change,K_i=K_i):
+            nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
+            nonlocal param_sets
+
+            param_sets[0,K_i] = change['new']
+
+            plot_ax.clear()
+            schematic_ax.clear()
+            plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
+
+            schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
+                                                n_input=num_inputs, # Number of inputs
+                                                param_sets=param_sets, # Parameter sets to draw from
+                                                univs_to_plot=np.array([0]), # Indicies of param_sets to plot
+                                                dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                                input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
+                                                ncols = 1, # Number of columns in figure
+                                                r_node = r_node, # Radius of nodes around center
+                                                r_loop = r_loop, # Radius of loops around nodes
+                                                node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
+                                                K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
+                                                input_cmap='Set2', # Colormap for nodes
+                                                fontname='Dejavu Sans', # Font name
+                                                fontsize=12, # Font size
+                                                non_output_dimer_color='gray',
+                                                upscale_arrowhead=1.7,
+                                                node_edge_width=1,
+            )
+
+            plot_fig.canvas.draw()
+            plot_fig.canvas.flush_events()
+
+            schematic_fig.canvas.draw()
+            schematic_fig.canvas.flush_events()
+
+            return
+
+        K_update_functions.append(temp_update_func)
+        K_widgets[K_i].observe(temp_update_func, names='value')
+
+    A_update_functions = []
+    for A_i in range(m-num_inputs):
+        def temp_update_func(change,A_i=A_i):
+            nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
+            nonlocal param_sets
+
+            param_sets[0,num_combos_with_replacement(m,2)+A_i] = change['new']
+
+            plot_ax.clear()
+            schematic_ax.clear()
+            plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
+
+            schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
+                                                n_input=num_inputs, # Number of inputs
+                                                param_sets=param_sets, # Parameter sets to draw from
+                                                univs_to_plot=np.array([0]), # Indicies of param_sets to plot
+                                                dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
+                                                input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
+                                                ncols = 1, # Number of columns in figure
+                                                r_node = r_node, # Radius of nodes around center
+                                                r_loop = r_loop, # Radius of loops around nodes
+                                                node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
+                                                K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
+                                                input_cmap='Set2', # Colormap for nodes
+                                                fontname='Dejavu Sans', # Font name
+                                                fontsize=12, # Font size
+                                                non_output_dimer_color='gray',
+                                                upscale_arrowhead=1.7,
+                                                node_edge_width=1,
+            )
+
+            plot_fig.canvas.draw()
+            plot_fig.canvas.flush_events()
+
+            schematic_fig.canvas.draw()
+            schematic_fig.canvas.flush_events()
+
+            return
+
+        A_update_functions.append(temp_update_func)
+        A_widgets[A_i].observe(temp_update_func, names='value')
+
+    ######################################
+
+    ############## Define App
+    # plot_fig.canvas.capture_scroll = True # If true then scrolling while the mouse is over the canvas will not move the entire notebook
+    plot_fig.canvas.header_visible = False # Hide the Figure name at the top of the figure
+    plot_fig.canvas.toolbar_visible = False
+    plot_fig.canvas.resizable = False
+
+    schematic_fig.canvas.header_visible = False # Hide the Figure name at the top of the figure
+    schematic_fig.canvas.toolbar_visible = False
+    schematic_fig.canvas.footer_visible = False
+    schematic_fig.canvas.resizable = False
+
+    app_grid[:,0] = schematic_fig.canvas
+    app_grid[:,1] = plot_fig.canvas
+    app_grid[0:2,2] = t_int_input
+    app_grid[:2,3] = output_dimer_dropdown_widget
+    app_grid[2,2] = ipywidgets.HTML(value="<b>Dimerization Affinities</b>",layout=ipywidgets.Layout(height='auto', width=f'auto'))
+    app_grid[2,3] = ipywidgets.HTML(value="<b>Accessory Protein Expression Levels</b>",layout=ipywidgets.Layout(height='auto', width=f'auto'))
+    for K_i in range(num_combos_with_replacement(m,2)):
+        app_grid[3+K_i,2] = K_widgets[K_i]
+    for A_i in range(m-num_inputs):
+        app_grid[3+A_i,3] = A_widgets[A_i]
+
+    # Display the interface
+    display(app_grid)
 
     return
-
-  def update_t(change):
-    nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
-    nonlocal t
-
-    t = change['new']
-
-    plot_ax.clear()
-    schematic_ax.clear()
-    plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
-
-    schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
-                                        n_input=num_inputs, # Number of inputs
-                                        param_sets=param_sets, # Parameter sets to draw from
-                                        univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                        dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
-                                        input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
-                                        ncols = 1, # Number of columns in figure
-                                        r_node = r_node, # Radius of nodes around center
-                                        r_loop = r_loop, # Radius of loops around nodes
-                                        node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
-                                        K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
-                                        input_cmap='Set2', # Colormap for nodes
-                                        fontname='Dejavu Sans', # Font name
-                                        fontsize=12, # Font size
-                                        non_output_dimer_color='gray',
-                                        upscale_arrowhead=1.7,
-                                        node_edge_width=1,
-    )
-
-    plot_fig.canvas.draw()
-    plot_fig.canvas.flush_events()
-
-    schematic_fig.canvas.draw()
-    schematic_fig.canvas.flush_events()
-
-    return
-
-  output_dimer_dropdown_widget.observe(update_dimer_of_interest, names='value')
-  t_int_input.observe(update_t, names='value')
-
-  K_update_functions = []
-  for K_i in range(num_combos_with_replacement(m,2)):
-    def temp_update_func(change,K_i=K_i):
-      nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
-      nonlocal param_sets
-
-      param_sets[0,K_i] = change['new']
-
-      plot_ax.clear()
-      schematic_ax.clear()
-      plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
-
-      schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
-                                          n_input=num_inputs, # Number of inputs
-                                          param_sets=param_sets, # Parameter sets to draw from
-                                          univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                          dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
-                                          input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
-                                          ncols = 1, # Number of columns in figure
-                                          r_node = r_node, # Radius of nodes around center
-                                          r_loop = r_loop, # Radius of loops around nodes
-                                          node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
-                                          K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
-                                          input_cmap='Set2', # Colormap for nodes
-                                          fontname='Dejavu Sans', # Font name
-                                          fontsize=12, # Font size
-                                          non_output_dimer_color='gray',
-                                          upscale_arrowhead=1.7,
-                                          node_edge_width=1,
-      )
-
-      plot_fig.canvas.draw()
-      plot_fig.canvas.flush_events()
-
-      schematic_fig.canvas.draw()
-      schematic_fig.canvas.flush_events()
-
-      return
-
-    K_update_functions.append(temp_update_func)
-    K_widgets[K_i].observe(temp_update_func, names='value')
-
-  A_update_functions = []
-  for A_i in range(m-num_inputs):
-    def temp_update_func(change,A_i=A_i):
-      nonlocal plot_fig, plot_ax, schematic_fig, schematic_ax
-      nonlocal param_sets
-
-      param_sets[0,num_combos_with_replacement(m,2)+A_i] = change['new']
-
-      plot_ax.clear()
-      schematic_ax.clear()
-      plot_fig,plot_ax = plot_responses_twoinput_static(plot_fig, plot_ax, m,param_sets,dimer_of_interest,t)
-
-      schematic_fig, schematic_ax = make_network_plots_polygon(schematic_fig, schematic_ax,m=m, # Number of monomers
-                                          n_input=num_inputs, # Number of inputs
-                                          param_sets=param_sets, # Parameter sets to draw from
-                                          univs_to_plot=np.array([0]), # Indicies of param_sets to plot
-                                          dimers_of_interest=np.array([[dimer_of_interest]]), # Index of output dimer
-                                          input_node_values=np.array([0,0]), # Abundances to use for input node(s), log scale
-                                          ncols = 1, # Number of columns in figure
-                                          r_node = r_node, # Radius of nodes around center
-                                          r_loop = r_loop, # Radius of loops around nodes
-                                          node_scales = node_scales, # Scales for node sizes (lower and upper bounds in log scale, min and max sizes)
-                                          K_edge_scales = K_edge_scales, # Scales for edge widths (lower and upper bounds in log scale, min and max widths)
-                                          input_cmap='Set2', # Colormap for nodes
-                                          fontname='Dejavu Sans', # Font name
-                                          fontsize=12, # Font size
-                                          non_output_dimer_color='gray',
-                                          upscale_arrowhead=1.7,
-                                          node_edge_width=1,
-      )
-
-      plot_fig.canvas.draw()
-      plot_fig.canvas.flush_events()
-
-      schematic_fig.canvas.draw()
-      schematic_fig.canvas.flush_events()
-
-      return
-
-    A_update_functions.append(temp_update_func)
-    A_widgets[A_i].observe(temp_update_func, names='value')
-
-  ######################################
-
-  ############## Define App
-  # plot_fig.canvas.capture_scroll = True # If true then scrolling while the mouse is over the canvas will not move the entire notebook
-  plot_fig.canvas.header_visible = False # Hide the Figure name at the top of the figure
-  plot_fig.canvas.toolbar_visible = False
-  plot_fig.canvas.resizable = False
-
-  schematic_fig.canvas.header_visible = False # Hide the Figure name at the top of the figure
-  schematic_fig.canvas.toolbar_visible = False
-  schematic_fig.canvas.footer_visible = False
-  schematic_fig.canvas.resizable = False
-
-  app_grid[:,0] = schematic_fig.canvas
-  app_grid[:,1] = plot_fig.canvas
-  app_grid[0:2,2] = t_int_input
-  app_grid[:2,3] = output_dimer_dropdown_widget
-  app_grid[2,2] = ipywidgets.HTML(value="<b>Dimerization Affinities</b>",layout=ipywidgets.Layout(height='auto', width=f'auto'))
-  app_grid[2,3] = ipywidgets.HTML(value="<b>Accessory Protein Expression Levels</b>",layout=ipywidgets.Layout(height='auto', width=f'auto'))
-  for K_i in range(num_combos_with_replacement(m,2)):
-      app_grid[3+K_i,2] = K_widgets[K_i]
-  for A_i in range(m-num_inputs):
-      app_grid[3+A_i,3] = A_widgets[A_i]
-
-  # Display the interface
-  display(app_grid)
-
-  return
 
