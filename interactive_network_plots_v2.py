@@ -776,32 +776,32 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
     else:
         if preset_function=='switch_off':
             m=3
-            param_sets = np.array([[1e-10, 1e-10, 1e3, 1e-10,1e-02, 1e-10, 1e1, 1e1]])
+            param_sets = np.array([[1e-5, 1e-5, 1e3, 1e-5,1e-02, 1e-5, 1e1, 1e1]])
             dimer_of_interest = make_nXn_species_names(m).index('D_2_3') - m # Index of dimer to use as output (D_1_1 = index 0)
         elif preset_function=='switch_on':
             m=3
-            param_sets = np.array([[1e-10,  1e2, 1e-10, 1e-10,1e1, 1e1, 1e1, 1]])
+            param_sets = np.array([[1e-5,  1e2, 1e-5, 1e-5,1e1, 1e1, 1e1, 1]])
             dimer_of_interest = make_nXn_species_names(m).index('D_3_3') - m # Index of dimer to use as output (D_1_1 = index 0)
         elif preset_function=='bandpass':
             m=3
-            param_sets = np.array([[1e-10, 1e3, 1, 1e-10, 1e3, 1, 1, 1]])
+            param_sets = np.array([[1e-5, 1e3, 1, 1e-5, 1e3, 1, 1, 1]])
             dimer_of_interest = make_nXn_species_names(m).index('D_3_3') - m
         elif preset_function=='bandstop':
             m=4
-            param_sets = np.array([[1e-10, 1e3, 1, 1e-10, 1e-10, 1e3, 1e-10, 1e-10, 1e3, 5e+3, 5, 5, 5e-1]])
+            param_sets = np.array([[1e-5, 1e3, 1, 1e-5, 1e-5, 1e3, 1e-5, 1e-5, 1e3, 5e+3, 5, 5, 5e-1]])
             dimer_of_interest = make_nXn_species_names(m).index('D_4_4') - m
         elif preset_function=='downupdown':
             m=4
-            param_sets = np.array([[1e-10, 361, 1.4, 10000.0, 1e-10, \
+            param_sets = np.array([[1e-5, 361, 1.4, 10000.0, 1e-5, \
                                     10000.0, 4819, 144, 18, \
-                                        1e-10, 5, 1, 5.1]])
+                                        1e-5, 5, 1, 5.1]])
             dimer_of_interest = make_nXn_species_names(m).index('D_3_3') - m
         elif preset_function=='updownup':
             m=5
-            param_sets = np.array([[1e-10, 10000.0, 765, 0.26, 20.5, \
-                                    1e-10, 1e-10, 3776, 1e-10, \
-                                        12.5, 1e-10, 10000.0, 9442, \
-                                            10000.0, 1e-10, 1.7, 48.6, \
+            param_sets = np.array([[1e-5, 10000.0, 765, 0.26, 20.5, \
+                                    1e-5, 1e-5, 3776, 1e-5, \
+                                        12.5, 1e-5, 10000.0, 9442, \
+                                            10000.0, 1e-5, 1.7, 48.6, \
                                                 0.74, 41]])
             dimer_of_interest = make_nXn_species_names(m).index('D_4_4') - m
         else:
@@ -831,7 +831,7 @@ def network_sandbox_oneinput(m,app_width=10,app_height=5,schematic_size=4,plot_w
     r_loop = 0.4*r_node
     schematic_fig, schematic_ax = plt.subplots(figsize=(schematic_size,schematic_size),dpi=72)
     node_scales = [-3,3,3*schematic_size,6*schematic_size]
-    K_edge_scales = [-5,7,0.5*schematic_size,2*schematic_size]
+    K_edge_scales = [-5.1,7,0.5*schematic_size,2*schematic_size]
 
     if dimer_of_interest is not None:
         dimer_of_interest_array = np.array([[dimer_of_interest]])
@@ -1242,79 +1242,79 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
     else:
         if preset_function=='ratio':
             m=3
-            param_sets = np.array([[1e-10,1e-10, 1e2,1e-10,1e3,1e-10,1e0]])
+            param_sets = np.array([[1e-5,1e-5, 1e2,1e-5,1e3,1e-5,1e0]])
             dimer_of_interest = make_nXn_species_names(m).index('D_1_3') - m # Index of dimer to use as output (D_1_1 = index 0)
             out_range = [1e-3,1e1]
         elif preset_function=='A=B':
             m=3
-            param_sets = np.array([[1e-10, 100000.0, 14003, 1e-10, \
+            param_sets = np.array([[1e-5, 100000.0, 14003, 1e-5, \
                                     14005, 100000.0, 1.3]])
             dimer_of_interest = make_nXn_species_names(m).index('D_3_3') - m # Index of dimer to use as output (D_1_1 = index 0)
             out_range = [1e-3,1e0]
         elif preset_function=='NOR':
             m=3
-            param_sets = np.array([[1e-10, 1e-10, 100000.0, \
-                                    1e-10, 100000.0, 1623, 1.86]])
+            param_sets = np.array([[1e-5, 1e-5, 100000.0, \
+                                    1e-5, 100000.0, 1623, 1.86]])
             dimer_of_interest = make_nXn_species_names(m).index('D_3_3') - m # Index of dimer to use as output (D_1_1 = index 0)
             out_range = [1e-3,1e1]
         elif preset_function=='ANOTB':
             if m==3:
-                param_sets = np.array([[1e-10, 1e-10, 0.14, \
-                                        1e-10, 100000.0, 1.16, 1.75]])
+                param_sets = np.array([[1e-5, 1e-5, 0.14, \
+                                        1e-5, 100000.0, 1.16, 1.75]])
                 dimer_of_interest = make_nXn_species_names(m).index('D_1_3') - m # Index of dimer to use as output (D_1_1 = index 0)
                 out_range = [1e-3,1e1]
             else:
                 m=4
-                param_sets = np.array([[3.0, 1e-10, 3.0, 10000.0, 1e-10, 10000.0, 1e-10, 1e-10, 1e-10, 1e-10, 1.0, 1.0]])
+                param_sets = np.array([[3.0, 1e-5, 3.0, 10000.0, 1e-5, 10000.0, 1e-5, 1e-5, 1e-5, 1e-5, 1.0, 1.0]])
                 dimer_of_interest = make_nXn_species_names(m).index('D_1_3') - m # Index of dimer to use as output (D_1_1 = index 0)
                 out_range = [1e-3,1e1]
         elif preset_function=='A!=B':
             m=4
-            param_sets = np.array([[1e-10, 10000.0, 254, 1e-10, 1e-10, 255, \
-                            1e-10, 1e-10, 10000.0, \
+            param_sets = np.array([[1e-5, 10000.0, 254, 1e-5, 1e-5, 255, \
+                            1e-5, 1e-5, 10000.0, \
                                 0.14, 24, 23]])
             dimer_of_interest = make_nXn_species_names(m).index('D_4_4') - m # Index of dimer to use as output (D_1_1 = index 0)
             out_range = [1e-3,1e1]
         elif preset_function=='NAND':
             m=4
-            param_sets = np.array([[50.0, 1e-10, 1e-10, 10000.0, 50.0, 10000.0, 1e-10, 1e-10, 10000.0, 1e-10, 1.0, 1.0]])
+            param_sets = np.array([[50.0, 1e-5, 1e-5, 10000.0, 50.0, 10000.0, 1e-5, 1e-5, 10000.0, 1e-5, 1.0, 1.0]])
             dimer_of_interest = make_nXn_species_names(m).index('D_3_4') - m # Index of dimer to use as output (D_1_1 = index 0)
             out_range = [1e-3,1e1]
         elif preset_function=='AND':
             m=4
-            param_sets = np.array([[1500, 9, 1e-10, 100000.0,  \
-                                    1500, 100000.0, 1e-10, 100, 1e-10, \
+            param_sets = np.array([[1500, 9, 1e-5, 100000.0,  \
+                                    1500, 100000.0, 1e-5, 100, 1e-5, \
                                         100, 0.55, 0.55]])
             dimer_of_interest = make_nXn_species_names(m).index('D_1_2') - m
             out_range = [1e-3,1e1]
         elif preset_function=='OR':
             m=4
-            param_sets = np.array([[1e-10, 1e-10, 10000.0, 1e-10, \
-                            1e-10, 10000.0, 1e-10, 1e-10, 10000.0, \
+            param_sets = np.array([[1e-5, 1e-5, 10000.0, 1e-5, \
+                            1e-5, 10000.0, 1e-5, 1e-5, 10000.0, \
                                 2.16, 20.9, 20]])
             dimer_of_interest = make_nXn_species_names(m).index('D_4_4') - m # Index of dimer to use as output (D_1_1 = index 0)
             out_range = [1e-3,1e2]
         elif preset_function=='2D_bandpass':
             m=5
-            param_sets = np.array([[1e-10, 1e-10, 1e-10, 10000.0, 20.0, 1e-10, 10000.0, 1e-10, 20.0, 1e-10,\
-                            1e-10, 10000.0, 1e-10, 10000.0, 100.0, 5.0, 5.0, 3.7]])
+            param_sets = np.array([[1e-5, 1e-5, 1e-5, 10000.0, 20.0, 1e-5, 10000.0, 1e-5, 20.0, 1e-5,\
+                            1e-5, 10000.0, 1e-5, 10000.0, 100.0, 5.0, 5.0, 3.7]])
             dimer_of_interest = make_nXn_species_names(m).index('D_5_5') - m # Index of dimer to use as output (D_1_1 = index 0)
             out_range = [1e-3,1e0]
         elif preset_function=='XNOR':
             m=5
             param_sets = np.array([[
-                1e-10, 1e-10, 1e-10, 1e4, 1e-10, 
-                1e-10, 1e4, 1e-10, 1e-10, 
-                1e-10, 1e4, 1e4, 
-                1e-10, 1e4,
+                1e-5, 1e-5, 1e-5, 1e4, 1e-5, 
+                1e-5, 1e4, 1e-5, 1e-5, 
+                1e-5, 1e4, 1e4, 
+                1e-5, 1e4,
                 1e4, 
                 2.3, 2.3, 1.29]])
             dimer_of_interest = make_nXn_species_names(m).index('D_5_5') - m # Index of dimer to use as output (D_1_1 = index 0)
             out_range = [1e-3,1e1]
         elif preset_function=='XOR':
             m=6
-            param_sets = np.array([[1e-10, 1e-10, 1e-10, 1e-10, 1e-10, 10000.0, 1e-10, 10000.0, 1e-10, 1e-10, 1e-10, \
-                            1e-10, 1e-10, 10000.0, 10000.0, 100.0, 10000.0, 1e-10, 1e-10, 10000.0, 1e-10, 2.0, 0.1, 1.0, 2.0]])
+            param_sets = np.array([[1e-5, 1e-5, 1e-5, 1e-5, 1e-5, 10000.0, 1e-5, 10000.0, 1e-5, 1e-5, 1e-5, \
+                            1e-5, 1e-5, 10000.0, 10000.0, 100.0, 10000.0, 1e-5, 1e-5, 10000.0, 1e-5, 2.0, 0.1, 1.0, 2.0]])
             dimer_of_interest = make_nXn_species_names(m).index('D_4_4') - m # Index of dimer to use as output (D_1_1 = index 0)
             out_range = [1e-3,1e-1]
         else:
@@ -1349,7 +1349,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
     r_loop = 0.4*r_node
     schematic_fig, schematic_ax = plt.subplots(figsize=(schematic_size,schematic_size),dpi=72)
     node_scales = [-3,3,3*schematic_size,6*schematic_size]
-    K_edge_scales = [-5,7,0.5*schematic_size,2*schematic_size]
+    K_edge_scales = [-5.1,7,0.5*schematic_size,2*schematic_size]
 
     if dimer_of_interest is not None:
         dimer_of_interest_array = np.array([[dimer_of_interest]])
