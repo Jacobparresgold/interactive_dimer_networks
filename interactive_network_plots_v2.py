@@ -1383,8 +1383,6 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
         disabled=False,
         layout=ipywidgets.Layout(height='auto', width=f'auto'),
     )
-    def custom_readout_format(value):
-        return f'{10**value:.2e}'
     
     out_range_slider = ipywidgets.FloatRangeSlider(
         value=[-3, 3],
@@ -1396,7 +1394,7 @@ def network_sandbox_twoinput(m,app_width,app_height,schematic_size,plot_size,pre
         continuous_update=False,
         orientation='horizontal',
         readout=True,
-        readout_format=custom_readout_format,
+        readout_format='.2f',
     )
 
     K_widgets = []
