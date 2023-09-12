@@ -1196,6 +1196,7 @@ def plot_responses_twoinput_static(plot_fig, plot_ax,m,param_sets,dimer_of_inter
     plot_ax.set_yticks([1e-3,1e-1,1e1,1e3])
     plot_ax.xaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
     plot_ax.yaxis.set_minor_locator(mticker.LogLocator(numticks=999, subs="auto"))
+    plot_ax.set_aspect(1) # Ensure that plot area is a perfect square
     _ = plot_ax.set_title('Response of {}'.format(make_nXn_species_names(m=m)[m+dimer_of_interest].replace('_','')))
     # Add colorbar
     if len(plot_fig.axes)==1:
